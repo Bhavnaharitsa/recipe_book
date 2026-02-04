@@ -657,6 +657,12 @@ function App() {
                   <div className="category-count">
                     {recipes[category.id]?.length || 0} recipes
                   </div>
+                  {(category.id === 'breakfast' || category.id === 'lunch' || category.id === 'dinner' || category.id === 'snacks') && (
+                    <div className="card-bottom-overlay">
+                      <h3 className="bottom-title">{category.name}</h3>
+                      <div className="bottom-count">{recipes[category.id]?.length || 0} recipes</div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

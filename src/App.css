@@ -317,7 +317,8 @@
   background: url('/images/chutneys_image.png') center/cover no-repeat;
   border: none !important;
   box-shadow: none !important;
-  padding: 2.5rem;
+  padding: 2.5rem 2.5rem 0 2.5rem;
+  padding-bottom: 0 !important;
   overflow: hidden;
   position: relative;
 }
@@ -340,7 +341,40 @@
   display: none;
 }
 
-.category-card.chutney-card .category-icon {
+.card-bottom-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 1.5rem 2rem 1.5rem 16px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  backdrop-filter: blur(19px);
+  z-index: 2;
+  text-align: left;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.card-bottom-overlay .bottom-title {
+  color: #000;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.card-bottom-overlay .bottom-count {
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.category-card.chutney-card .category-icon,
+.category-card.chutney-card > h3,
+.category-card.chutney-card > p,
+.category-card.chutney-card > .category-count {
   display: none;
 }
 
@@ -348,7 +382,8 @@
   background: url('/images/sweets_image.png') center/cover no-repeat;
   border: none !important;
   box-shadow: none !important;
-  padding: 2.5rem;
+  padding: 2.5rem 2.5rem 0 2.5rem;
+  padding-bottom: 0 !important;
   overflow: hidden;
   position: relative;
 }
@@ -363,7 +398,7 @@
   width: 120%;
   height: 120%;
   background: url('/images/sweets_image.png') center/cover no-repeat;
-  filter: blur(3px);
+  filter: blur(2.5px);
   z-index: 0;
 }
 
@@ -371,7 +406,10 @@
   display: none;
 }
 
-.category-card.sweets-card .category-icon {
+.category-card.sweets-card .category-icon,
+.category-card.sweets-card > h3,
+.category-card.sweets-card > p,
+.category-card.sweets-card > .category-count {
   display: none;
 }
 
@@ -379,7 +417,8 @@
   background: url('/images/sabzi_image.png') center/cover no-repeat;
   border: none !important;
   box-shadow: none !important;
-  padding: 2.5rem;
+  padding: 2.5rem 2.5rem 0 2.5rem;
+  padding-bottom: 0 !important;
   overflow: hidden;
   position: relative;
 }
@@ -394,7 +433,7 @@
   width: 120%;
   height: 120%;
   background: url('/images/sabzi_image.png') center/cover no-repeat;
-  filter: blur(3px);
+  filter: blur(2.5px);
   z-index: 0;
 }
 
@@ -402,7 +441,10 @@
   display: none;
 }
 
-.category-card.sabzis-card .category-icon {
+.category-card.sabzis-card .category-icon,
+.category-card.sabzis-card > h3,
+.category-card.sabzis-card > p,
+.category-card.sabzis-card > .category-count {
   display: none;
 }
 
@@ -410,7 +452,8 @@
   background: url('/images/snacks_image.png') center/cover no-repeat;
   border: none !important;
   box-shadow: none !important;
-  padding: 2.5rem;
+  padding: 2.5rem 2.5rem 0 2.5rem;
+  padding-bottom: 0 !important;
   overflow: hidden;
   position: relative;
 }
@@ -425,7 +468,7 @@
   width: 120%;
   height: 120%;
   background: url('/images/snacks_image.png') center/cover no-repeat;
-  filter: blur(3px);
+  filter: blur(2.5px);
   z-index: 0;
 }
 
@@ -433,11 +476,17 @@
   display: none;
 }
 
-.category-card.snacks-card .category-icon {
+.category-card.snacks-card .category-icon,
+.category-card.snacks-card > h3,
+.category-card.snacks-card > p,
+.category-card.snacks-card > .category-count {
   display: none;
 }
 
-.category-card.chutney-card > * {
+.category-card.chutney-card > *:not(.card-bottom-overlay),
+.category-card.sweets-card > *:not(.card-bottom-overlay),
+.category-card.sabzis-card > *:not(.card-bottom-overlay),
+.category-card.snacks-card > *:not(.card-bottom-overlay) {
   position: relative;
   z-index: 1;
 }
