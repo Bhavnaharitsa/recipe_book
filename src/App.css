@@ -147,50 +147,23 @@
   left: 20%;
 }
 
-.food-placeholder {
+.food-image {
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(135deg, #f4a460 0%, #daa520 50%, #cd853f 100%);
-  position: relative;
-  overflow: hidden;
+  object-fit: cover;
+  display: block;
 }
 
-.food-placeholder.large-food {
+.food-image.large-food {
   width: 280px;
   height: 280px;
   border-radius: 50%;
 }
 
-.food-placeholder.small-food {
+.food-image.small-food {
   width: 200px;
   height: 200px;
   border-radius: 50%;
-}
-
-.food-placeholder::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-.food-placeholder::after {
-  content: '🍛';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 4rem;
-  opacity: 0.7;
-}
-
-.food-placeholder.small-food::after {
-  font-size: 3rem;
 }
 
 .categories-view {
@@ -338,6 +311,135 @@
   overflow: hidden;
 }
 
+.category-card.chutney-card {
+  background: url('/images/chutneys_image.png') center/cover no-repeat;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.category-card.chutney-card::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+  width: 120%;
+  height: 120%;
+  background: url('/images/chutneys_image.png') center/cover no-repeat;
+  filter: blur(3px);
+  z-index: 0;
+}
+
+.category-card.chutney-card::after {
+  display: none;
+}
+
+.category-card.chutney-card .category-icon {
+  display: none;
+}
+
+.category-card.sweets-card {
+  background: url('/images/sweets_image.png') center/cover no-repeat;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.category-card.sweets-card::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+  width: 120%;
+  height: 120%;
+  background: url('/images/sweets_image.png') center/cover no-repeat;
+  filter: blur(3px);
+  z-index: 0;
+}
+
+.category-card.sweets-card::after {
+  display: none;
+}
+
+.category-card.sweets-card .category-icon {
+  display: none;
+}
+
+.category-card.sabzis-card {
+  background: url('/images/sabzi_image.png') center/cover no-repeat;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.category-card.sabzis-card::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+  width: 120%;
+  height: 120%;
+  background: url('/images/sabzi_image.png') center/cover no-repeat;
+  filter: blur(3px);
+  z-index: 0;
+}
+
+.category-card.sabzis-card::after {
+  display: none;
+}
+
+.category-card.sabzis-card .category-icon {
+  display: none;
+}
+
+.category-card.snacks-card {
+  background: url('/images/snacks_image.png') center/cover no-repeat;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.category-card.snacks-card::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+  width: 120%;
+  height: 120%;
+  background: url('/images/snacks_image.png') center/cover no-repeat;
+  filter: blur(3px);
+  z-index: 0;
+}
+
+.category-card.snacks-card::after {
+  display: none;
+}
+
+.category-card.snacks-card .category-icon {
+  display: none;
+}
+
+.category-card.chutney-card > * {
+  position: relative;
+  z-index: 1;
+}
+
 .category-card::before {
   content: '';
   position: absolute;
@@ -345,19 +447,14 @@
   left: 0;
   right: 0;
   height: 5px;
-  background: var(--category-color);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+  background: #8B4000;
+  z-index: 1;
 }
 
 .category-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-  border-color: var(--category-color);
-}
-
-.category-card:hover::before {
-  transform: scaleX(1);
+  border-color: #8B4000;
 }
 
 .category-icon {
@@ -382,7 +479,7 @@
 
 .category-count {
   display: inline-block;
-  background: linear-gradient(135deg, var(--category-color), var(--category-color));
+  background: #8B4000;
   color: white;
   padding: 0.5rem 1.2rem;
   border-radius: 20px;

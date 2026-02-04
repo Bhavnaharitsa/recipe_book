@@ -29,20 +29,6 @@ const categories = [
     icon: '🍿',
     description: 'Crispy and delicious South Indian snacks',
     color: '#FFD700'
-  },
-  {
-    id: 'desserts',
-    name: 'Desserts',
-    icon: '🍰',
-    description: 'Sweet treats and traditional desserts',
-    color: '#FF69B4'
-  },
-  {
-    id: 'beverages',
-    name: 'Beverages',
-    icon: '☕',
-    description: 'Refreshing drinks and traditional beverages',
-    color: '#4A90E2'
   }
 ]
 
@@ -606,10 +592,18 @@ function App() {
           <div className="home-right">
             <div className="food-photography">
               <div className="food-item large">
-                <div className="food-placeholder large-food"></div>
+                <img 
+                  src="/images/chutney-idli.jpg" 
+                  alt="South Indian chutney with idlis" 
+                  className="food-image large-food"
+                />
               </div>
               <div className="food-item small">
-                <div className="food-placeholder small-food"></div>
+                <img 
+                  src="/images/chutney-idli.jpg" 
+                  alt="South Indian chutney with idlis" 
+                  className="food-image small-food"
+                />
               </div>
             </div>
           </div>
@@ -653,7 +647,7 @@ function App() {
               {categories.map(category => (
                 <div
                   key={category.id}
-                  className="category-card"
+                  className={`category-card ${category.id === 'breakfast' ? 'chutney-card' : ''} ${category.id === 'lunch' ? 'sweets-card' : ''} ${category.id === 'dinner' ? 'sabzis-card' : ''} ${category.id === 'snacks' ? 'snacks-card' : ''}`}
                   onClick={() => handleCategoryClick(category.id)}
                   style={{ '--category-color': category.color }}
                 >
