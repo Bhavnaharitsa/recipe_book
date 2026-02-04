@@ -570,10 +570,6 @@ function App() {
       {currentView === 'home' && (
         <div className="homepage-split">
           <div className="home-left">
-            <button className="quick-edit-button">
-              <span className="pencil-icon">✏️</span>
-              Quick Edit
-            </button>
             <div className="home-content">
               <h1 className="main-title">
                 <span>Savor Every Bite</span>
@@ -591,18 +587,11 @@ function App() {
           <div className="divider-line"></div>
           <div className="home-right">
             <div className="food-photography">
-              <div className="food-item large">
+              <div className="food-item main-frame">
                 <img 
-                  src="/images/chutney-idli.jpg" 
-                  alt="South Indian chutney with idlis" 
-                  className="food-image large-food"
-                />
-              </div>
-              <div className="food-item small">
-                <img 
-                  src="/images/chutney-idli.jpg" 
-                  alt="South Indian chutney with idlis" 
-                  className="food-image small-food"
+                  src="/images/main_frame.png" 
+                  alt="Main frame" 
+                  className="food-image main-frame-image"
                 />
               </div>
             </div>

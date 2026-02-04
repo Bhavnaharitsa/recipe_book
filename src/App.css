@@ -21,31 +21,6 @@
   justify-content: center;
 }
 
-.quick-edit-button {
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.quick-edit-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.pencil-icon {
-  font-size: 0.9rem;
-}
 
 .home-content {
   max-width: 600px;
@@ -110,25 +85,26 @@
 
 .home-right {
   flex: 1;
-  background: 
-    linear-gradient(135deg, rgba(101, 67, 33, 0.9) 0%, rgba(139, 69, 19, 0.95) 100%),
-    url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h100v100H0z' fill='%2354321a'/%3E%3Cpath d='M0 0l100 100M100 0L0 100' stroke='%233d2817' stroke-width='0.5' opacity='0.3'/%3E%3C/svg%3E");
-  background-size: cover, 200px 200px;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 3rem;
+  padding: 0;
+  overflow: hidden;
 }
 
 .food-photography {
-  position: relative;
-  width: 100%;
+  position: absolute;
+  top: 0;
+  left: -50%;
+  right: 0;
+  bottom: 0;
+  width: 150%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
 }
 
 .food-item {
@@ -164,6 +140,27 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
+}
+
+.food-item.main-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.food-image.main-frame-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .categories-view {
