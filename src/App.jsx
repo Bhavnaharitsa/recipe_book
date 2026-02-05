@@ -629,7 +629,7 @@ function App() {
         </header>
       )}
 
-      <main className={`main-content ${currentView === 'categories' ? 'full-width' : ''}`}>
+      <main className={`main-content ${currentView === 'categories' || currentView === 'category' ? 'full-width' : ''}`}>
         {currentView === 'categories' && (
           <div className="categories-view">
             <div className="category-grid">
@@ -660,26 +660,156 @@ function App() {
 
         {currentView === 'category' && (
           <div className="category-view">
-            <h2 className="section-title">
-              {categories.find(c => c.id === selectedCategory)?.icon}{' '}
-              {categories.find(c => c.id === selectedCategory)?.name}
-            </h2>
-            <div className="recipe-grid">
-              {currentRecipes.map(recipe => (
-                <div
-                  key={recipe.id}
-                  className="recipe-card"
-                  onClick={() => handleRecipeClick(recipe)}
-                >
-                  <h3>{recipe.title}</h3>
-                  <p className="recipe-description">{recipe.description}</p>
-                  <div className="recipe-meta">
-                    <span>⏱️ {recipe.prepTime}</span>
-                    <span>🔥 {recipe.cookTime}</span>
-                    <span>👥 {recipe.servings} servings</span>
-                  </div>
+            <div className="chutney-split-layout">
+              <div className="chutney-sidebar">
+                <h2 className="chutney-sidebar-title">
+                  {categories.find(c => c.id === selectedCategory)?.name}
+                </h2>
+                <div className="chutney-sidebar-content">
+                  {selectedCategory === 'breakfast' && (
+                    <>
+                      <p className="chutney-intro">
+                        Chutneys are an integral part of South Indian cuisine, adding vibrant flavors and textures to every meal. These versatile condiments are made from fresh ingredients, spices, and herbs, creating a perfect balance of sweet, sour, spicy, and tangy flavors.
+                      </p>
+                      <div className="chutney-benefits">
+                        <h3 className="chutney-benefits-title">Benefits</h3>
+                        <ul className="chutney-benefits-list">
+                          <li>Rich in antioxidants from fresh herbs and spices</li>
+                          <li>Aids in digestion with natural enzymes</li>
+                          <li>Enhances the nutritional value of meals</li>
+                          <li>Adds flavor without excessive calories</li>
+                          <li>Contains probiotics from fermentation</li>
+                          <li>Boosts metabolism with spices like ginger and chilies</li>
+                        </ul>
+                      </div>
+                      <div className="chutney-info">
+                        <h3 className="chutney-info-title">About Chutneys</h3>
+                        <p className="chutney-info-text">
+                          Traditional South Indian chutneys are typically made fresh daily using ingredients like coconut, coriander, mint, tamarind, and various lentils. They can be served as accompaniments with dosas, idlis, vadas, and rice dishes. Each region has its own unique variations, making chutneys a diverse and essential component of South Indian culinary heritage.
+                        </p>
+                      </div>
+                    </>
+                  )}
+                  {selectedCategory === 'lunch' && (
+                    <>
+                      <p className="chutney-intro">
+                        Sweets hold a special place in South Indian culture, often prepared during festivals, celebrations, and auspicious occasions. These traditional desserts are crafted with love, using time-honored recipes passed down through generations, featuring ingredients like jaggery, coconut, rice, and lentils.
+                      </p>
+                      <div className="chutney-benefits">
+                        <h3 className="chutney-benefits-title">Benefits</h3>
+                        <ul className="chutney-benefits-list">
+                          <li>Provides instant energy from natural sugars</li>
+                          <li>Rich in essential nutrients from traditional ingredients</li>
+                          <li>Often made with jaggery, a healthier alternative to refined sugar</li>
+                          <li>Contains healthy fats from coconut and ghee</li>
+                          <li>Brings joy and satisfaction, enhancing overall well-being</li>
+                          <li>Cultural significance in celebrations and rituals</li>
+                        </ul>
+                      </div>
+                      <div className="chutney-info">
+                        <h3 className="chutney-info-title">About Sweets</h3>
+                        <p className="chutney-info-text">
+                          South Indian sweets are known for their unique textures and flavors, ranging from creamy payasams to crumbly laddus. Popular varieties include Mysore Pak, Badam Halwa, Rava Kesari, and various types of payasam. These sweets are often offered as prasadam in temples and shared during festivals like Diwali, Pongal, and weddings.
+                        </p>
+                      </div>
+                    </>
+                  )}
+                  {selectedCategory === 'dinner' && (
+                    <>
+                      <p className="chutney-intro">
+                        Sabzis, or vegetable curries, form the heart of South Indian vegetarian cuisine. These flavorful dishes showcase the region's abundant produce, cooked with aromatic spices and traditional techniques that bring out the natural flavors of vegetables while creating rich, satisfying gravies.
+                      </p>
+                      <div className="chutney-benefits">
+                        <h3 className="chutney-benefits-title">Benefits</h3>
+                        <ul className="chutney-benefits-list">
+                          <li>High in fiber, vitamins, and minerals</li>
+                          <li>Low in calories, supporting healthy weight management</li>
+                          <li>Rich in antioxidants from vegetables and spices</li>
+                          <li>Promotes digestive health with natural fiber</li>
+                          <li>Provides essential nutrients for overall wellness</li>
+                          <li>Supports heart health with plant-based nutrition</li>
+                        </ul>
+                      </div>
+                      <div className="chutney-info">
+                        <h3 className="chutney-info-title">About Sabzis</h3>
+                        <p className="chutney-info-text">
+                          South Indian sabzis are characterized by their use of mustard seeds, curry leaves, and coconut, creating distinct regional flavors. From dry stir-fries like poriyal to rich gravies like avial, these dishes are typically served with rice, roti, or as part of a thali. Each state has its signature preparations, reflecting local tastes and available ingredients.
+                        </p>
+                      </div>
+                    </>
+                  )}
+                  {selectedCategory === 'snacks' && (
+                    <>
+                      <p className="chutney-intro">
+                        South Indian snacks are beloved for their crispy textures, bold flavors, and perfect balance of spices. These delightful treats are enjoyed throughout the day - as tea-time accompaniments, evening snacks, or festive specials. From deep-fried delicacies to steamed favorites, they showcase the region's culinary creativity.
+                      </p>
+                      <div className="chutney-benefits">
+                        <h3 className="chutney-benefits-title">Benefits</h3>
+                        <ul className="chutney-benefits-list">
+                          <li>Provides quick energy for active lifestyles</li>
+                          <li>Rich in protein from lentils and legumes</li>
+                          <li>Contains healthy fats when prepared with quality oils</li>
+                          <li>Satisfies cravings in a flavorful way</li>
+                          <li>Often includes beneficial spices like turmeric and cumin</li>
+                          <li>Brings people together during social gatherings</li>
+                        </ul>
+                      </div>
+                      <div className="chutney-info">
+                        <h3 className="chutney-info-title">About Snacks</h3>
+                        <p className="chutney-info-text">
+                          South Indian snacks range from crispy vadas and bondas to savory murukkus and mixture. These snacks are often made with rice flour, urad dal, and spices, creating unique textures and flavors. They're perfect for evening tea, served during festivals, or enjoyed as street food. Popular varieties include Medu Vada, Masala Vada, Murukku, and various types of namkeen.
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
-              ))}
+              </div>
+              <div className="chutney-cards-container">
+                <div className="chutney-layout">
+                  {currentRecipes.map(recipe => {
+                    let totalTime = recipe.cookTime
+                    if (recipe.prepTime.includes('hours')) {
+                      const hours = recipe.prepTime.match(/(\d+)\s*hours?/)?.[1] || '8'
+                      totalTime = `${hours} hrs`
+                    } else {
+                      const cookTimeNum = parseInt(recipe.cookTime) || 0
+                      if (cookTimeNum >= 60) {
+                        totalTime = `${Math.floor(cookTimeNum / 60)} hr`
+                      } else {
+                        totalTime = `${cookTimeNum} mins`
+                      }
+                    }
+                    const difficulty = recipe.prepTime.includes('hours') ? 'Hard' : 
+                      (parseInt(recipe.cookTime) || 0) < 20 ? 'Easy' : 'Medium'
+                    const categoryImage = selectedCategory === 'breakfast' ? '/images/chutneys_image.png' :
+                      selectedCategory === 'lunch' ? '/images/sweets_image.png' :
+                      selectedCategory === 'dinner' ? '/images/sabzi_image.png' :
+                      '/images/snacks_image.png'
+                    return (
+                      <div
+                        key={recipe.id}
+                        className="chutney-card"
+                        onClick={() => handleRecipeClick(recipe)}
+                      >
+                        <div className="chutney-card-image-wrapper">
+                          <img
+                            src={categoryImage}
+                            alt={recipe.title}
+                            className="chutney-card-image"
+                          />
+                        </div>
+                        <div className="chutney-card-content">
+                          <h3 className="chutney-card-title">{recipe.title.toUpperCase()}</h3>
+                          <p className="chutney-card-description">{recipe.description}</p>
+                          <div className="difficulty-badge">
+                            {difficulty}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )}
