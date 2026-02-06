@@ -1,6 +1,74 @@
 import { useState } from 'react'
 import './App.css'
 
+function RecipeDetail({ recipe }) {
+  const [activeTab, setActiveTab] = useState('ingredients')
+  
+  const categoryImage = recipe.category === 'breakfast' ? '/images/chutneys_image.png' :
+    recipe.category === 'lunch' ? '/images/sweets_image.png' :
+    recipe.category === 'dinner' ? '/images/sabzi_image.png' :
+    '/images/snacks_image.png'
+
+  return (
+    <div className="recipe-detail-container">
+      <div className="recipe-detail-image-section">
+        <div className="recipe-image-wrapper">
+          <img 
+            src={categoryImage} 
+            alt={recipe.title}
+            className="recipe-main-image"
+          />
+        </div>
+      </div>
+      <div className="recipe-detail-content-section">
+        <div className="recipe-detail-header">
+          <h1>{recipe.title}</h1>
+          <p className="recipe-description">{recipe.description}</p>
+        </div>
+        
+        <div className="recipe-tabs">
+          <div className="tab-buttons">
+            <button 
+              className={`tab-button ${activeTab === 'ingredients' ? 'active' : ''}`}
+              onClick={() => setActiveTab('ingredients')}
+            >
+              Ingredients
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'recipe' ? 'active' : ''}`}
+              onClick={() => setActiveTab('recipe')}
+            >
+              Recipe
+            </button>
+          </div>
+          
+          <div className="tab-content">
+            {activeTab === 'ingredients' && (
+              <div className="tab-panel ingredients-panel">
+                <ul className="ingredients-list">
+                  {recipe.ingredients.map((ingredient, index) => (
+                    <li key={index}>{ingredient}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {activeTab === 'recipe' && (
+              <div className="tab-panel recipe-panel">
+                <ol className="instructions-list">
+                  {recipe.instructions.map((instruction, index) => (
+                    <li key={index}>{instruction}</li>
+                  ))}
+                </ol>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const categories = [
   {
     id: 'breakfast',
@@ -815,48 +883,10 @@ function App() {
         )}
 
         {currentView === 'recipe' && selectedRecipe && (
-          <div className="recipe-detail">
-            <h1>{selectedRecipe.title}</h1>
-            <p className="recipe-description">{selectedRecipe.description}</p>
-            
-            <div className="recipe-info">
-              <div className="info-item">
-                <strong>Prep Time:</strong> {selectedRecipe.prepTime}
-              </div>
-              <div className="info-item">
-                <strong>Cook Time:</strong> {selectedRecipe.cookTime}
-              </div>
-              <div className="info-item">
-                <strong>Servings:</strong> {selectedRecipe.servings}
-              </div>
-            </div>
-
-            <div className="recipe-section">
-              <h2>Ingredients</h2>
-              <ul className="ingredients-list">
-                {selectedRecipe.ingredients.map((ingredient, index) => (
-                  <li key={index}>{ingredient}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="recipe-section">
-              <h2>Instructions</h2>
-              <ol className="instructions-list">
-                {selectedRecipe.instructions.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
-                ))}
-              </ol>
-            </div>
-          </div>
+          <RecipeDetail recipe={selectedRecipe} />
         )}
       </main>
 
-      {currentView !== 'home' && (
-        <footer className="footer">
-          <p>Made with ❤️ for South Indian food lovers</p>
-        </footer>
-      )}
     </div>
   )
 }
