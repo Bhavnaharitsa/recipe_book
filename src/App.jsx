@@ -644,11 +644,11 @@ function App() {
                 <span>with Sasi's</span>
                 <span>Recipes</span>
               </h1>
-              <p className="home-subtitle">
-                Welcome to Sasi's Recipe, where we share delightful culinary creations daily
+              <p className="home-description">
+                These recipes are easy to follow, beginner friendly, and made with simple ingredients you already know. Whether you are learning to cook or just want reliable home food, you will find dishes that actually work and taste like home.
               </p>
               <button className="get-cooking-button" onClick={handleGetCooking}>
-                Get Cooking
+                <span>Get Cooking</span>
               </button>
             </div>
           </div>
@@ -700,28 +700,33 @@ function App() {
       <main className={`main-content ${currentView === 'categories' || currentView === 'category' ? 'full-width' : ''}`}>
         {currentView === 'categories' && (
           <div className="categories-view">
-            <div className="category-grid">
-              {categories.map(category => (
-                <div
-                  key={category.id}
-                  className={`category-card ${category.id === 'breakfast' ? 'chutney-card' : ''} ${category.id === 'lunch' ? 'sweets-card' : ''} ${category.id === 'dinner' ? 'sabzis-card' : ''} ${category.id === 'snacks' ? 'snacks-card' : ''}`}
-                  onClick={() => handleCategoryClick(category.id)}
-                  style={{ '--category-color': category.color }}
-                >
-                  <div className="category-icon">{category.icon}</div>
-                  <h3>{category.name}</h3>
-                  <p>{category.description}</p>
-                  <div className="category-count">
-                    {recipes[category.id]?.length || 0} recipes
-                  </div>
-                  {(category.id === 'breakfast' || category.id === 'lunch' || category.id === 'dinner' || category.id === 'snacks') && (
-                    <div className="card-bottom-overlay">
-                      <h3 className="bottom-title">{category.name}</h3>
-                      <div className="bottom-count">{recipes[category.id]?.length || 0} recipes</div>
+            <div className="recipe-cards-grid">
+              {Object.values(recipes).flat().map(recipe => {
+                const categoryImage = recipe.category === 'breakfast' ? '/images/chutneys_image.png' :
+                  recipe.category === 'lunch' ? '/images/sweets_image.png' :
+                  recipe.category === 'dinner' ? '/images/sabzi_image.png' :
+                  '/images/snacks_image.png'
+                
+                return (
+                  <div
+                    key={recipe.id}
+                    className="recipe-card-item"
+                    onClick={() => handleRecipeClick(recipe)}
+                  >
+                    <div className="recipe-card-image-container">
+                      <img
+                        src={categoryImage}
+                        alt={recipe.title}
+                        className="recipe-card-image"
+                      />
                     </div>
-                  )}
-                </div>
-              ))}
+                    <div className="recipe-card-content">
+                      <h3 className="recipe-card-title">{recipe.title}</h3>
+                      <p className="recipe-card-description">{recipe.description}</p>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
