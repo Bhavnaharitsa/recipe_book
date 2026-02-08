@@ -702,10 +702,10 @@ function App() {
           <div className="categories-view">
             <div className="category-magazine-layout">
               {categories.map((category, index) => {
-                const categoryImage = category.id === 'breakfast' ? '/images/chutneys_image.png' :
-                  category.id === 'lunch' ? '/images/sweets_image.png' :
+                const categoryImage = category.id === 'breakfast' ? '/images/chutneys_category_image.png' :
+                  category.id === 'lunch' ? '/images/sweets_category_image.png' :
                   category.id === 'dinner' ? '/images/sabzi_image.png' :
-                  '/images/snacks_image.png'
+                  '/images/main_gravies_category_image.png'
                 
                 return (
                   <div
@@ -728,7 +728,7 @@ function App() {
                   </div>
                 )
               })}
-              <div className="magazine-info-strip">
+              <div className="magazine-info-strip" style={{ display: 'flex', visibility: 'visible', opacity: 1 }}>
                 <div className="info-strip-content">
                   <h3 className="info-strip-title">South Indian Cuisine</h3>
                   <p className="info-strip-text">
