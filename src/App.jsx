@@ -700,45 +700,134 @@ function App() {
       <main className={`main-content ${currentView === 'categories' || currentView === 'category' ? 'full-width' : ''}`}>
         {currentView === 'categories' && (
           <div className="categories-view">
-            <div className="recipe-cards-grid">
-              {Object.values(recipes).flat().map(recipe => {
-                const categoryImage = recipe.category === 'breakfast' ? '/images/chutneys_image.png' :
-                  recipe.category === 'lunch' ? '/images/sweets_image.png' :
-                  recipe.category === 'dinner' ? '/images/sabzi_image.png' :
+            <div className="category-magazine-layout">
+              {categories.map((category, index) => {
+                const categoryImage = category.id === 'breakfast' ? '/images/chutneys_image.png' :
+                  category.id === 'lunch' ? '/images/sweets_image.png' :
+                  category.id === 'dinner' ? '/images/sabzi_image.png' :
                   '/images/snacks_image.png'
                 
                 return (
                   <div
-                    key={recipe.id}
-                    className="recipe-card-item"
-                    onClick={() => handleRecipeClick(recipe)}
+                    key={category.id}
+                    className={`magazine-category-section category-${index + 1}`}
+                    onClick={() => handleCategoryClick(category.id)}
                   >
-                    <div className="recipe-card-image-container">
+                    <div className="magazine-image-container">
                       <img
                         src={categoryImage}
-                        alt={recipe.title}
-                        className="recipe-card-image"
+                        alt={category.name}
+                        className="magazine-category-image"
                       />
                     </div>
-                    <div className="recipe-card-content">
-                      <h3 className="recipe-card-title">{recipe.title}</h3>
-                      <p className="recipe-card-description">{recipe.description}</p>
+                    <div className="magazine-text-block">
+                      <h2 className="magazine-category-title">{category.name}</h2>
+                      <p className="magazine-category-description">{category.description}</p>
                     </div>
+                    <div className="magazine-vertical-label">{category.name}</div>
                   </div>
                 )
               })}
+              <div className="magazine-info-strip">
+                <div className="info-strip-content">
+                  <h3 className="info-strip-title">South Indian Cuisine</h3>
+                  <p className="info-strip-text">
+                    A rich tapestry of flavors, South Indian food celebrates the harmony of spices, 
+                    grains, and fresh ingredients. From the tangy chutneys that awaken the palate 
+                    to the sweet treats that mark celebrations, each dish tells a story of tradition 
+                    and home.
+                  </p>
+                  <p className="info-strip-text">
+                    Rooted in centuries of culinary wisdom, these recipes have been passed down 
+                    through generations, preserving the authentic taste of South India in every bite.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {currentView === 'category' && (
           <div className="category-view">
-            <div className="chutney-split-layout">
-              <div className="chutney-sidebar">
-                <h2 className="chutney-sidebar-title">
-                  {categories.find(c => c.id === selectedCategory)?.name}
-                </h2>
-                <div className="chutney-sidebar-content">
+            <div className="chutney-magazine-layout">
+              <div className="chutney-hero-section">
+                <div className="chutney-hero-image">
+                  <img 
+                    src={selectedCategory === 'breakfast' ? '/images/chutneys_image.png' :
+                         selectedCategory === 'lunch' ? '/images/sweets_image.png' :
+                         selectedCategory === 'dinner' ? '/images/sabzi_image.png' :
+                         '/images/snacks_image.png'}
+                    alt={categories.find(c => c.id === selectedCategory)?.name}
+                    className="chutney-hero-img"
+                  />
+                  <div className="chutney-red-overlay"></div>
+                </div>
+                <div className="chutney-hero-content">
+                  <h1 className="chutney-hero-title">
+                    {selectedCategory === 'breakfast' ? (
+                      <>
+                        TRADITION
+                        <br />
+                        MEETS
+                        <br />
+                        FLAVOR
+                      </>
+                    ) : selectedCategory === 'lunch' ? (
+                      <>
+                        SWEET
+                        <br />
+                        CELEBRATIONS
+                        <br />
+                        OF HOME
+                      </>
+                    ) : selectedCategory === 'dinner' ? (
+                      <>
+                        VEGETABLE
+                        <br />
+                        HARMONY
+                        <br />
+                        IN SPICES
+                      </>
+                    ) : (
+                      <>
+                        CRISPY
+                        <br />
+                        DELIGHTS
+                        <br />
+                        FOR ALL
+                      </>
+                    )}
+                  </h1>
+                  <div className="chutney-hero-text">
+                    <p>
+                      {selectedCategory === 'breakfast' && (
+                        <>
+                          Chutneys are an integral part of South Indian cuisine, adding vibrant flavors and textures to every meal. These versatile condiments are made from fresh ingredients, spices, and herbs, creating a perfect balance of sweet, sour, spicy, and tangy flavors. Traditional South Indian chutneys are typically made fresh daily using ingredients like coconut, coriander, mint, tamarind, and various lentils.
+                        </>
+                      )}
+                      {selectedCategory === 'lunch' && (
+                        <>
+                          Sweets hold a special place in South Indian culture, often prepared during festivals, celebrations, and auspicious occasions. These traditional desserts are crafted with love, using time-honored recipes passed down through generations, featuring ingredients like jaggery, coconut, rice, and lentils.
+                        </>
+                      )}
+                      {selectedCategory === 'dinner' && (
+                        <>
+                          Sabzis, or vegetable curries, form the heart of South Indian vegetarian cuisine. These flavorful dishes showcase the region's abundant produce, cooked with aromatic spices and traditional techniques that bring out the natural flavors of vegetables while creating rich, satisfying gravies.
+                        </>
+                      )}
+                      {selectedCategory === 'snacks' && (
+                        <>
+                          South Indian snacks are beloved for their crispy textures, bold flavors, and perfect balance of spices. These delightful treats are enjoyed throughout the day - as tea-time accompaniments, evening snacks, or festive specials. From deep-fried delicacies to steamed favorites, they showcase the region's culinary creativity.
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="chutney-split-layout">
+                <div className="chutney-sidebar">
+                  <h2 className="chutney-sidebar-main-title">South Indian Recipes</h2>
+                  <div className="chutney-sidebar-content">
                   {selectedCategory === 'breakfast' && (
                     <>
                       <p className="chutney-intro">
@@ -882,6 +971,7 @@ function App() {
                     )
                   })}
                 </div>
+              </div>
               </div>
             </div>
           </div>
