@@ -93,7 +93,7 @@ const categories = [
   },
   {
     id: 'snacks',
-    name: 'Snacks',
+    name: 'Main Gravies',
     icon: '🍿',
     description: 'Crispy and delicious South Indian snacks',
     color: '#FFD700'
@@ -730,6 +730,7 @@ function App() {
               })}
               <div className="magazine-info-strip" style={{ display: 'flex', visibility: 'visible', opacity: 1 }}>
                 <div className="info-strip-content">
+                  <p className="info-strip-quote">Where simplicity becomes flavour.</p>
                   <h3 className="info-strip-title">South Indian Cuisine</h3>
                   <p className="info-strip-text">
                     A rich tapestry of flavors, South Indian food celebrates the harmony of spices, 
@@ -741,6 +742,17 @@ function App() {
                     Rooted in centuries of culinary wisdom, these recipes have been passed down 
                     through generations, preserving the authentic taste of South India in every bite.
                   </p>
+                </div>
+              </div>
+              <div className="magazine-info-strip-right" style={{ display: 'flex', visibility: 'visible', opacity: 1 }}>
+                <div className="info-strip-content">
+                  <p className="info-strip-text">
+                    Sweets hold a special place in South Indian culture, crafted with love using time-honored recipes.
+                  </p>
+                  <p className="info-strip-text">
+                    From festive laddus to quiet evening treats, sweets mark moments both big and small. They are offerings, celebrations, and memories passed gently from one generation to the next.
+                  </p>
+                  <p className="info-strip-quote">A balanced diet is a sweet in each hand.</p>
                 </div>
               </div>
             </div>
