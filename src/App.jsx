@@ -1,11 +1,57 @@
 import { useState } from 'react'
 import './App.css'
 
-function RecipeDetail({ recipe }) {
-  const categoryImage = recipe.category === 'breakfast' ? '/images/chutneys_category_image.png' :
-    recipe.category === 'lunch' ? '/images/sweets_category_image.png' :
-    recipe.category === 'dinner' ? '/images/sabzi_image.png' :
-    '/images/main_gravies_category_image.png'
+function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
+  const [showChecklist, setShowChecklist] = useState(false)
+  const [checkedIngredients, setCheckedIngredients] = useState({})
+  const [checkedSteps, setCheckedSteps] = useState({})
+
+  // Get the correct image for the recipe
+  const getRecipeImage = () => {
+    if (recipe.category === 'breakfast') {
+      if (recipe.title.toLowerCase().includes('coconut chutney')) {
+        return '/images/coconut_chutney.png'
+      } else if (recipe.title.toLowerCase().includes('tomato chutney')) {
+        return '/images/red_tomato_chutney.png'
+      } else if (recipe.title.toLowerCase().includes('coriander chutney')) {
+        return '/images/green_chutney.png'
+      } else if (recipe.title.toLowerCase().includes('peanut chutney')) {
+        return '/images/peanut_chutney.png'
+      }
+      return '/images/chutneys_category_image.png'
+    } else if (recipe.category === 'lunch') {
+      if (recipe.title.toLowerCase().includes('ashoka halwa')) {
+        return '/images/ashoka_halwa.png'
+      } else if (recipe.title.toLowerCase().includes('puran poli')) {
+        return '/images/puran_poli.png'
+      } else if (recipe.title.toLowerCase().includes('modhak')) {
+        return '/images/modhuka.png'
+      } else if (recipe.title.toLowerCase().includes('payasam')) {
+        return '/images/rice_payasam.png'
+      }
+      return '/images/sweets_category_image.png'
+    } else if (recipe.category === 'dinner') {
+      if (recipe.title.toLowerCase().includes('carrot')) {
+        return '/images/carrot_sabzi.png'
+      } else if (recipe.title.toLowerCase().includes('beetroot')) {
+        return '/images/beetroot_sabzi.png'
+      } else if (recipe.title.toLowerCase().includes('aloo')) {
+        return '/images/aalo_sabzi.png'
+      } else if (recipe.title.toLowerCase().includes('mix veg')) {
+        return '/images/mix_veg_sabzi.png'
+      } else if (recipe.title.toLowerCase().includes('vangi') || recipe.title.toLowerCase().includes('brinjal')) {
+        return '/images/brinjal_sabzi.png'
+      } else if (recipe.title.toLowerCase().includes('bhindi')) {
+        return '/images/bhindi_sabzi.png'
+      } else if (recipe.title.toLowerCase().includes('beans')) {
+        return '/images/beans_sabzi.png'
+      }
+      return '/images/sabzi_image.png'
+    }
+    return '/images/main_gravies_category_image.png'
+  }
+
+  const categoryImage = getRecipeImage()
 
   // Parse prep time and cook time
   const parseTime = (timeStr) => {
@@ -73,32 +119,122 @@ function RecipeDetail({ recipe }) {
 
   const instructionGroups = groupInstructions()
 
+  // Get related recipes for "Complete the Meal" section
+  const getRelatedRecipes = () => {
+    const allRecipes = [
+      ...(recipes.breakfast || []),
+      ...(recipes.lunch || []),
+      ...(recipes.dinner || []),
+      ...(recipes.snacks || [])
+    ]
+    // Filter out current recipe and get 3 related recipes
+    return allRecipes
+      .filter(r => r.id !== recipe.id)
+      .slice(0, 3)
+  }
+
+  const relatedRecipes = getRelatedRecipes()
+
+  // Get all ingredients as a flat list for checklist
+  const getAllIngredients = () => {
+    const all = []
+    ingredientGroups.forEach(group => {
+      group.items.forEach(item => {
+        if (!item.includes(':')) {
+          all.push(item)
+        }
+      })
+    })
+    return all
+  }
+
+  const allIngredients = getAllIngredients()
+
+  // Toggle ingredient checkbox
+  const toggleIngredient = (index) => {
+    setCheckedIngredients(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }))
+  }
+
+  // Toggle step checkbox
+  const toggleStep = (index) => {
+    setCheckedSteps(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }))
+  }
+
+  // Get time display for related recipes
+  const getTimeDisplay = (recipe) => {
+    if (recipe.prepTime?.includes('hours')) {
+      const hours = recipe.prepTime.match(/(\d+)\s*hours?/)?.[1] || '8'
+      return `${hours} hrs (ferment)`
+    }
+    return recipe.cookTime || 'N/A'
+  }
+
+  // Get difficulty for related recipes
+  const getDifficultyDisplay = (recipe) => {
+    const prepHours = recipe.prepTime?.match(/(\d+)\s*hours?/i)?.[1] || 0
+    const cookMins = parseInt(recipe.cookTime?.match(/(\d+)\s*min/i)?.[1] || 0)
+    if (prepHours > 0 || cookMins > 45) return 'Hard'
+    if (cookMins > 25) return 'Medium'
+    return 'Easy'
+  }
+
+  // Get image for related recipes (special images for specific chutneys)
+  const getCategoryImage = (relatedRecipe) => {
+    if (relatedRecipe.category === 'breakfast') {
+      if (relatedRecipe.title.toLowerCase().includes('coconut chutney')) {
+        return '/images/coconut_chutney.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('tomato chutney')) {
+        return '/images/red_tomato_chutney.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('coriander chutney')) {
+        return '/images/green_chutney.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('peanut chutney')) {
+        return '/images/peanut_chutney.png'
+      }
+      return '/images/chutneys_category_image.png'
+    } else if (relatedRecipe.category === 'lunch') {
+      if (relatedRecipe.title.toLowerCase().includes('ashoka halwa')) {
+        return '/images/ashoka_halwa.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('puran poli')) {
+        return '/images/puran_poli.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('modhak')) {
+        return '/images/modhak.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('payasam')) {
+        return '/images/payasam.png'
+      }
+      return '/images/sweets_category_image.png'
+    } else if (relatedRecipe.category === 'dinner') {
+      if (relatedRecipe.title.toLowerCase().includes('carrot')) {
+        return '/images/carrot_sabzi.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('beetroot')) {
+        return '/images/beetroot_sabzi.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('aloo')) {
+        return '/images/aalo_sabzi.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('mix veg')) {
+        return '/images/mix_veg_sabzi.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('vangi') || relatedRecipe.title.toLowerCase().includes('brinjal')) {
+        return '/images/brinjal_sabzi.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('bhindi')) {
+        return '/images/bhindi_sabzi.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('beans')) {
+        return '/images/beans_sabzi.png'
+      }
+      return '/images/sabzi_image.png'
+    }
+    return '/images/main_gravies_category_image.png'
+  }
+
   return (
     <div className="recipe-detail-new-container">
       {/* Header Section */}
       <div className="recipe-detail-new-header">
-        <div className="recipe-category-tag">{categoryNames[recipe.category] || 'RECIPE'}</div>
         <h1 className="recipe-detail-new-title">{recipe.title}</h1>
         <p className="recipe-detail-new-description">{recipe.description}</p>
-        <div className="recipe-detail-divider"></div>
-        <div className="recipe-metrics-table">
-          <div className="metric-item">
-            <div className="metric-label">PREP TIME</div>
-            <div className="metric-value">{prepTime}</div>
-          </div>
-          <div className="metric-item">
-            <div className="metric-label">COOK TIME</div>
-            <div className="metric-value">{cookTime}</div>
-          </div>
-          <div className="metric-item">
-            <div className="metric-label">SERVINGS</div>
-            <div className="metric-value">{recipe.servings} People</div>
-          </div>
-          <div className="metric-item">
-            <div className="metric-label">DIFFICULTY</div>
-            <div className="metric-value">{difficulty}</div>
-          </div>
-        </div>
       </div>
 
       {/* Main Image */}
@@ -109,6 +245,69 @@ function RecipeDetail({ recipe }) {
           className="recipe-detail-main-image"
         />
       </div>
+
+      {/* Checklist Modal/Section */}
+      {showChecklist && (
+        <div className="recipe-checklist-overlay">
+          <div className="recipe-checklist-container">
+            <div className="checklist-header">
+              <h2>Cooking Checklist</h2>
+              <button 
+                className="checklist-close"
+                onClick={() => setShowChecklist(false)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="checklist-content">
+              {/* Ingredients Checklist */}
+              <div className="checklist-section">
+                <h3 className="checklist-section-title">Ingredients</h3>
+                <ul className="checklist-items">
+                  {allIngredients.map((ingredient, index) => (
+                    <li key={index} className="checklist-item">
+                      <label className="checklist-label">
+                        <input
+                          type="checkbox"
+                          checked={checkedIngredients[index] || false}
+                          onChange={() => toggleIngredient(index)}
+                          className="checklist-checkbox"
+                        />
+                        <span className={checkedIngredients[index] ? 'checked' : ''}>
+                          {ingredient}
+                        </span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Steps Checklist */}
+              <div className="checklist-section">
+                <h3 className="checklist-section-title">Recipe Steps</h3>
+                <ol className="checklist-items checklist-steps">
+                  {recipe.instructions.map((step, index) => (
+                    <li key={index} className="checklist-item">
+                      <label className="checklist-label">
+                        <input
+                          type="checkbox"
+                          checked={checkedSteps[index] || false}
+                          onChange={() => toggleStep(index)}
+                          className="checklist-checkbox"
+                        />
+                        <span className={checkedSteps[index] ? 'checked' : ''}>
+                          {step}
+                        </span>
+                      </label>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Two Column Layout */}
       <div className="recipe-detail-new-content">
@@ -152,6 +351,56 @@ function RecipeDetail({ recipe }) {
           ))}
         </div>
       </div>
+
+      {/* Do This Recipe Now Button - placed after lists */}
+      <div className="recipe-action-section">
+        <button 
+          className="do-recipe-now-button"
+          onClick={() => setShowChecklist(!showChecklist)}
+        >
+          {showChecklist ? 'Hide Checklist' : 'Start Cooking'}
+        </button>
+      </div>
+
+      {/* Complete the Meal Section */}
+      <div className="complete-meal-section">
+        <div className="complete-meal-header">
+          <div className="complete-meal-title-section">
+            <h2 className="complete-meal-title">Complete the Meal</h2>
+            <p className="complete-meal-subtitle">Authentic pairings perfect for this dish.</p>
+          </div>
+          <button className="view-all-recipes-button">View All Recipes</button>
+        </div>
+        <div className="complete-meal-cards">
+          {relatedRecipes.map((relatedRecipe) => (
+            <div
+              key={relatedRecipe.id}
+              className="complete-meal-card"
+              onClick={() => handleRecipeClick(relatedRecipe)}
+            >
+              <div className="complete-meal-card-image">
+                <img
+                  src={getCategoryImage(relatedRecipe)}
+                  alt={relatedRecipe.title}
+                />
+              </div>
+              <div className="complete-meal-card-content">
+                <h3 className="complete-meal-card-title">{relatedRecipe.title}</h3>
+                <div className="complete-meal-card-meta">
+                  <span className="complete-meal-card-time">
+                    <span className="time-icon">🕐</span>
+                    {getTimeDisplay(relatedRecipe)}
+                  </span>
+                  <span className={`complete-meal-card-difficulty difficulty-${getDifficultyDisplay(relatedRecipe).toLowerCase()}`}>
+                    {getDifficultyDisplay(relatedRecipe)}
+                  </span>
+                  <span className="complete-meal-card-arrow">→</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
@@ -191,279 +440,502 @@ const recipes = {
   breakfast: [
     {
       id: 1,
-      title: 'Masala Dosa',
-      description: 'Crispy fermented crepe filled with spiced potato filling',
-      prepTime: '8 hours (fermentation)',
-      cookTime: '20 min',
+      title: 'Fresh Coconut Chutney',
+      description: 'Creamy coconut chutney with roasted dal and a fragrant tempering',
+      prepTime: '10 min',
+      cookTime: '10 min',
       servings: 4,
       category: 'breakfast',
       ingredients: [
-        '2 cups rice',
-        '1 cup urad dal (split black gram)',
-        '1/2 tsp fenugreek seeds',
+        '1 cup fresh grated coconut',
+        '2 tbsp roasted chana dal (dalia)',
+        '2 green chilies',
+        '1 small piece ginger',
         'Salt to taste',
-        'Water for soaking and grinding',
-        'For Masala:',
-        '4 large potatoes, boiled and cubed',
-        '2 onions, sliced',
-        '2 green chilies, chopped',
+        'Water as needed',
+        'For Tempering:',
         '1 tsp mustard seeds',
-        '1 tsp cumin seeds',
-        '1/2 tsp turmeric powder',
-        'Curry leaves',
-        '2 tbsp oil',
-        'Salt to taste'
+        '1 tsp urad dal',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1 tbsp coconut oil or gingelly oil'
       ],
       instructions: [
-        'Soak rice, urad dal, and fenugreek seeds separately for 6 hours',
-        'Grind urad dal to smooth paste, rice to slightly coarse paste',
-        'Mix both batters, add salt, and ferment overnight',
-        'For masala: Heat oil, add mustard and cumin seeds',
-        'Add curry leaves, green chilies, and onions',
-        'Sauté until onions are translucent',
-        'Add turmeric, boiled potatoes, and salt',
-        'Mash slightly and mix well',
-        'Heat a dosa tawa, pour batter in circular motion',
-        'Cook until golden brown, add masala in center',
-        'Fold and serve hot with coconut chutney and sambar'
+        'In a mixer jar, add grated coconut, roasted chana dal, green chilies, ginger, salt, and a little water.',
+        'Grind to a smooth or slightly coarse chutney, adding water as needed for desired consistency.',
+        'Transfer the chutney to a serving bowl.',
+        'For tempering, heat oil in a small pan.',
+        'Add mustard seeds and let them splutter.',
+        'Add urad dal and fry until golden.',
+        'Add dried red chilies and curry leaves; sauté for a few seconds.',
+        'Pour the tempering over the chutney and mix gently.',
+        'Serve immediately with idli, dosa, or pongal.'
       ]
     },
     {
       id: 2,
-      title: 'Idli',
-      description: 'Soft, fluffy steamed rice cakes - a South Indian staple',
-      prepTime: '8 hours (fermentation)',
+      title: 'Tomato Chutney',
+      description: 'Tangy and spicy tomato chutney with a perfect balance of flavors',
+      prepTime: '5 min',
       cookTime: '15 min',
       servings: 4,
       category: 'breakfast',
       ingredients: [
-        '2 cups idli rice',
-        '1 cup urad dal',
-        '1/2 tsp fenugreek seeds',
+        '4 large ripe tomatoes',
+        '2 dried red chilies',
+        '1 tsp urad dal',
+        '1 tsp chana dal',
+        '1/2 tsp mustard seeds',
+        '1/2 tsp cumin seeds',
+        '1/4 tsp asafoetida (hing)',
+        '8-10 curry leaves',
+        '2 tbsp oil',
         'Salt to taste',
-        'Water for soaking'
+        '1 tsp jaggery (optional)',
+        'Coriander leaves for garnish'
       ],
       instructions: [
-        'Soak rice and urad dal separately for 6 hours',
-        'Grind urad dal to smooth, fluffy paste',
-        'Grind rice to slightly coarse paste',
-        'Mix both batters, add salt',
-        'Ferment overnight in warm place',
-        'Grease idli plates, pour batter',
-        'Steam for 10-12 minutes',
-        'Serve hot with sambar and chutney'
+        'Heat oil in a pan, add urad dal and chana dal.',
+        'Fry until golden, then add dried red chilies.',
+        'Add mustard seeds and let them splutter.',
+        'Add cumin seeds, asafoetida, and curry leaves.',
+        'Add chopped tomatoes and salt.',
+        'Cook until tomatoes are soft and mushy.',
+        'Let it cool, then grind to a smooth paste.',
+        'Add jaggery if using, mix well.',
+        'Garnish with coriander leaves.',
+        'Serve with idli, dosa, or pongal.'
       ]
     },
     {
       id: 3,
-      title: 'Pongal',
-      description: 'Creamy rice and lentil porridge, perfect for breakfast',
-      prepTime: '10 min',
-      cookTime: '25 min',
+      title: 'Coriander Chutney',
+      description: 'Fresh and vibrant green chutney with coriander and mint',
+      prepTime: '5 min',
+      cookTime: '5 min',
       servings: 4,
       category: 'breakfast',
       ingredients: [
-        '1 cup rice',
-        '1/2 cup moong dal (yellow lentils)',
-        '4 cups water',
-        '1 tsp black peppercorns',
-        '1 tsp cumin seeds',
-        '2 tbsp ghee',
-        '10-12 cashews',
-        'Curry leaves',
-        'Ginger, grated',
-        'Salt to taste'
+        '1 cup fresh coriander leaves',
+        '1/2 cup fresh mint leaves',
+        '2 green chilies',
+        '1 small piece ginger',
+        '1 tbsp roasted chana dal',
+        '1 tsp lemon juice',
+        'Salt to taste',
+        'Water as needed',
+        'For Tempering:',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1 tbsp oil'
       ],
       instructions: [
-        'Dry roast moong dal until golden',
-        'Wash rice and dal together',
-        'Pressure cook with water for 3-4 whistles',
-        'Heat ghee, add peppercorns and cumin',
-        'Add cashews, curry leaves, and ginger',
-        'Sauté until cashews are golden',
-        'Add to cooked rice-dal mixture',
-        'Mash slightly, add salt',
-        'Cook for 2-3 minutes until creamy',
-        'Serve hot with coconut chutney'
+        'Wash coriander and mint leaves thoroughly.',
+        'In a mixer jar, add coriander leaves, mint leaves, green chilies, ginger, roasted chana dal, lemon juice, salt, and a little water.',
+        'Grind to a smooth paste, adding water as needed.',
+        'Transfer to a serving bowl.',
+        'For tempering, heat oil in a small pan.',
+        'Add mustard seeds and let them splutter.',
+        'Add urad dal and fry until golden.',
+        'Add dried red chilies and curry leaves; sauté for a few seconds.',
+        'Pour the tempering over the chutney and mix gently.',
+        'Serve fresh with idli, dosa, or any South Indian breakfast.'
+      ]
+    },
+    {
+      id: 4,
+      title: 'Peanut Chutney',
+      description: 'Rich and nutty chutney with roasted peanuts and aromatic spices',
+      prepTime: '5 min',
+      cookTime: '10 min',
+      servings: 4,
+      category: 'breakfast',
+      ingredients: [
+        '1 cup roasted peanuts',
+        '2 dried red chilies',
+        '1 tsp urad dal',
+        '1 tsp chana dal',
+        '1/2 tsp mustard seeds',
+        '1/2 tsp cumin seeds',
+        '1/4 tsp asafoetida (hing)',
+        '8-10 curry leaves',
+        '2 tbsp oil',
+        'Salt to taste',
+        '1 tsp tamarind paste',
+        'Water as needed',
+        'Coriander leaves for garnish'
+      ],
+      instructions: [
+        'Heat oil in a pan, add urad dal and chana dal.',
+        'Fry until golden, then add dried red chilies.',
+        'Add mustard seeds and let them splutter.',
+        'Add cumin seeds, asafoetida, and curry leaves.',
+        'Remove from heat and let it cool.',
+        'In a mixer jar, add roasted peanuts, the tempering mixture, tamarind paste, salt, and a little water.',
+        'Grind to a smooth or slightly coarse paste, adding water as needed.',
+        'Transfer to a serving bowl.',
+        'Garnish with coriander leaves.',
+        'Serve with idli, dosa, or vada.'
       ]
     }
   ],
   lunch: [
     {
       id: 4,
-      title: 'Sambar',
-      description: 'Tangy lentil stew with vegetables - the heart of South Indian meals',
+      title: 'Ashoka Halwa',
+      description: 'Rich, fudgy sweet made with moong dal and ghee',
       prepTime: '15 min',
-      cookTime: '30 min',
+      cookTime: '45 min',
       servings: 6,
       category: 'lunch',
       ingredients: [
-        '1 cup toor dal (pigeon peas)',
-        '1 cup mixed vegetables (drumstick, okra, pumpkin)',
-        '1 onion, chopped',
-        '1 tomato, chopped',
-        '2 tbsp sambar powder',
-        '1/2 tsp turmeric',
-        'Tamarind pulp (lemon-sized ball)',
-        '1 tsp mustard seeds',
-        '1/2 tsp fenugreek seeds',
-        'Curry leaves',
-        '2 red chilies',
-        '2 tbsp oil',
-        'Salt to taste',
-        'Coriander leaves'
+        '1 cup yellow moong dal',
+        '1.5 cups sugar',
+        '1 cup ghee',
+        '1/2 cup milk',
+        '1/4 tsp cardamom powder',
+        'Few strands of saffron (optional)',
+        '2 tbsp cashews, chopped',
+        '2 tbsp raisins'
       ],
       instructions: [
-        'Pressure cook toor dal until soft',
-        'Soak tamarind in warm water, extract pulp',
-        'Cook vegetables in tamarind water',
-        'Add sambar powder and turmeric',
-        'Mash dal and add to vegetables',
-        'Simmer for 10 minutes',
-        'Heat oil for tempering',
-        'Add mustard seeds, fenugreek, red chilies, curry leaves',
-        'Pour tempering over sambar',
-        'Garnish with coriander leaves',
-        'Serve hot with rice'
+        'Dry roast moong dal until golden and aromatic',
+        'Wash and pressure cook dal with 2 cups water for 3-4 whistles',
+        'Mash the cooked dal until smooth',
+        'Heat ghee in a heavy-bottomed pan',
+        'Add the mashed dal and cook on medium heat',
+        'Stir continuously until dal starts leaving the sides',
+        'Add sugar and mix well',
+        'Add milk gradually while stirring',
+        'Add cardamom powder and saffron',
+        'Continue cooking until halwa thickens and ghee separates',
+        'Garnish with cashews and raisins',
+        'Serve warm or at room temperature'
       ]
     },
     {
       id: 5,
-      title: 'Rasam',
-      description: 'Spicy, tangy soup made with tamarind and spices',
-      prepTime: '10 min',
-      cookTime: '20 min',
-      servings: 4,
+      title: 'Puran Poli',
+      description: 'Sweet flatbread stuffed with spiced lentil and jaggery filling',
+      prepTime: '30 min',
+      cookTime: '30 min',
+      servings: 8,
       category: 'lunch',
       ingredients: [
-        '1/2 cup toor dal',
-        'Tamarind pulp (small lemon-sized)',
-        '2 tomatoes, chopped',
-        '2 tsp rasam powder',
-        '1/2 tsp turmeric',
-        '1 tsp mustard seeds',
-        '1/2 tsp cumin seeds',
-        'Curry leaves',
-        'Coriander leaves',
-        '2 red chilies',
+        'For Dough:',
+        '2 cups all-purpose flour (maida)',
+        '1/4 tsp turmeric powder',
         '2 tbsp oil',
         'Salt to taste',
-        'Asafoetida (hing)'
+        'Water as needed',
+        'For Filling:',
+        '1 cup chana dal (split Bengal gram)',
+        '1 cup jaggery, grated',
+        '1/2 tsp cardamom powder',
+        '1/4 tsp nutmeg powder',
+        '2 tbsp ghee',
+        'Oil or ghee for cooking'
       ],
       instructions: [
-        'Cook toor dal until soft, mash well',
-        'Soak tamarind, extract pulp',
-        'Boil tamarind water with tomatoes',
-        'Add rasam powder, turmeric, salt',
-        'Add mashed dal, simmer',
-        'Heat oil, add mustard and cumin seeds',
-        'Add red chilies, curry leaves, asafoetida',
-        'Pour tempering over rasam',
-        'Garnish with coriander',
-        'Serve hot as soup or with rice'
+        'Soak chana dal for 2 hours, then pressure cook until soft',
+        'Drain water and mash the dal',
+        'Heat ghee, add mashed dal and jaggery',
+        'Cook until mixture thickens and leaves the sides',
+        'Add cardamom and nutmeg powder, mix well',
+        'Let the filling cool completely',
+        'For dough, mix flour, turmeric, salt, and oil',
+        'Add water gradually and knead to soft dough',
+        'Rest dough for 30 minutes',
+        'Divide dough and filling into equal portions',
+        'Roll dough, place filling, seal and roll into thin roti',
+        'Cook on tawa with ghee until golden on both sides',
+        'Serve hot with ghee or milk'
       ]
     },
     {
       id: 6,
-      title: 'Coconut Rice',
-      description: 'Fragrant rice cooked with fresh coconut and spices',
-      prepTime: '10 min',
-      cookTime: '25 min',
-      servings: 4,
+      title: 'Modhak',
+      description: 'Sweet dumplings filled with coconut and jaggery, steamed to perfection',
+      prepTime: '20 min',
+      cookTime: '20 min',
+      servings: 12,
       category: 'lunch',
       ingredients: [
-        '2 cups cooked rice',
+        'For Outer Cover:',
+        '1 cup rice flour',
+        '1.5 cups water',
+        '1 tsp oil',
+        'Pinch of salt',
+        'For Filling:',
         '1 cup fresh grated coconut',
-        '2 tbsp oil',
-        '1 tsp mustard seeds',
-        '1 tsp urad dal',
-        '1 tsp chana dal',
-        '2 red chilies',
-        'Curry leaves',
-        'Cashews',
-        'Salt to taste',
-        'Turmeric powder'
+        '1 cup jaggery, grated',
+        '1/2 tsp cardamom powder',
+        '1 tbsp poppy seeds (optional)',
+        '1 tbsp chopped cashews',
+        '1 tbsp raisins'
       ],
       instructions: [
-        'Cook rice and let it cool',
-        'Heat oil in a pan',
-        'Add mustard seeds, urad dal, chana dal',
-        'Add red chilies and curry leaves',
-        'Add cashews and roast until golden',
-        'Add grated coconut, sauté for 2 minutes',
-        'Add turmeric and salt',
-        'Mix in cooked rice gently',
-        'Cook for 2-3 minutes',
-        'Serve hot'
+        'Heat water with oil and salt in a pan',
+        'When water boils, add rice flour and mix quickly',
+        'Cover and cook on low heat for 2 minutes',
+        'Remove from heat and knead to smooth dough',
+        'For filling, heat jaggery with 2 tbsp water',
+        'Add grated coconut and cook until thick',
+        'Add cardamom, poppy seeds, cashews, and raisins',
+        'Mix well and let filling cool',
+        'Take small portions of dough, flatten into disc',
+        'Place filling in center, gather edges and seal',
+        'Shape into modhak with pleats on top',
+        'Steam in idli steamer for 12-15 minutes',
+        'Serve hot with ghee'
+      ]
+    },
+    {
+      id: 7,
+      title: 'Payasam',
+      description: 'Creamy rice pudding with jaggery, cardamom, and nuts',
+      prepTime: '10 min',
+      cookTime: '30 min',
+      servings: 6,
+      category: 'lunch',
+      ingredients: [
+        '1/2 cup rice (preferably short grain)',
+        '1 cup jaggery, grated',
+        '4 cups milk',
+        '1/2 cup coconut milk',
+        '1/2 tsp cardamom powder',
+        '2 tbsp ghee',
+        '2 tbsp cashews, chopped',
+        '2 tbsp raisins',
+        'Few strands of saffron (optional)',
+        '1 tsp rose water (optional)'
+      ],
+      instructions: [
+        'Wash rice and soak for 30 minutes',
+        'Heat ghee in a heavy-bottomed pan',
+        'Add cashews and raisins, fry until golden',
+        'Drain and set aside',
+        'In the same pan, add drained rice',
+        'Sauté for 2 minutes, then add milk',
+        'Cook on medium heat until rice is soft',
+        'Add jaggery and stir until dissolved',
+        'Add coconut milk and mix well',
+        'Add cardamom powder, saffron, and rose water',
+        'Simmer for 5 minutes until creamy',
+        'Garnish with fried cashews and raisins',
+        'Serve warm or chilled'
       ]
     }
   ],
   dinner: [
     {
       id: 7,
-      title: 'Bisi Bele Bath',
-      description: 'Spicy rice and lentil one-pot meal from Karnataka',
-      prepTime: '20 min',
-      cookTime: '30 min',
-      servings: 4,
-      category: 'dinner',
-      ingredients: [
-        '1 cup rice',
-        '1/2 cup toor dal',
-        'Mixed vegetables (beans, carrot, peas)',
-        '2 tbsp bisi bele bath powder',
-        'Tamarind pulp',
-        '1 onion, chopped',
-        '1 tomato, chopped',
-        '2 tbsp ghee',
-        'Mustard seeds, curry leaves',
-        'Cashews',
-        'Salt to taste'
-      ],
-      instructions: [
-        'Pressure cook rice and dal together',
-        'Cook vegetables separately',
-        'Heat ghee, add mustard seeds',
-        'Add curry leaves, onions, tomatoes',
-        'Add bisi bele bath powder',
-        'Add tamarind pulp and water',
-        'Mix in cooked rice-dal mixture',
-        'Add vegetables, simmer',
-        'Garnish with cashews and ghee',
-        'Serve hot with papad'
-      ]
-    },
-    {
-      id: 8,
-      title: 'Curd Rice',
-      description: 'Cooling yogurt rice - perfect end to a South Indian meal',
-      prepTime: '5 min',
+      title: 'Carrot Sabzi',
+      description: 'Lightly spiced carrot stir-fry with coconut and curry leaves',
+      prepTime: '10 min',
       cookTime: '15 min',
       servings: 4,
       category: 'dinner',
       ingredients: [
-        '2 cups cooked rice',
-        '1 cup thick curd (yogurt)',
+        '3 cups carrots, finely chopped or sliced',
         '1 tbsp oil',
         '1 tsp mustard seeds',
         '1 tsp urad dal',
-        'Green chilies, chopped',
-        'Ginger, grated',
-        'Curry leaves',
+        '2 green chilies, slit',
+        '8–10 curry leaves',
+        '1/4 cup fresh grated coconut',
+        '1/4 tsp turmeric powder',
         'Salt to taste',
-        'Milk (optional)'
+        'Coriander leaves for garnish'
       ],
       instructions: [
-        'Mash cooked rice slightly when warm',
-        'Add curd and mix well',
-        'Add salt and mix',
-        'Heat oil for tempering',
-        'Add mustard seeds and urad dal',
-        'Add green chilies, ginger, curry leaves',
-        'Pour tempering over curd rice',
-        'Mix gently, add milk if needed',
-        'Serve at room temperature',
-        'Garnish with coriander or pomegranate'
+        'Heat oil in a pan and add mustard seeds.',
+        'When they splutter, add urad dal, green chilies, and curry leaves.',
+        'Add chopped carrots, turmeric, and salt; mix well.',
+        'Sprinkle a little water, cover, and cook until carrots are tender yet firm.',
+        'Add grated coconut and sauté for 2–3 minutes.',
+        'Garnish with coriander leaves and serve warm.'
+      ]
+    },
+    {
+      id: 8,
+      title: 'Beetroot Sabzi',
+      description: 'Sweet and earthy beetroot curry tempered with South Indian spices',
+      prepTime: '10 min',
+      cookTime: '20 min',
+      servings: 4,
+      category: 'dinner',
+      ingredients: [
+        '3 cups beetroot, finely chopped or grated',
+        '1 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '2 dried red chilies',
+        '8–10 curry leaves',
+        '1/4 tsp turmeric powder',
+        'Salt to taste',
+        '1/4 cup fresh grated coconut'
+      ],
+      instructions: [
+        'Heat oil in a pan and add mustard seeds.',
+        'Once they splutter, add urad dal, dried red chilies, and curry leaves.',
+        'Add beetroot, turmeric, and salt; mix well.',
+        'Sprinkle some water, cover, and cook until beetroot is soft.',
+        'Add grated coconut, sauté for 2 minutes, and switch off the heat.',
+        'Serve as a side for rice or chapati.'
+      ]
+    },
+    {
+      id: 9,
+      title: 'Aloo Sabzi',
+      description: 'Comforting potato curry with mustard, curry leaves, and spices',
+      prepTime: '10 min',
+      cookTime: '20 min',
+      servings: 4,
+      category: 'dinner',
+      ingredients: [
+        '4 medium potatoes, boiled and cubed',
+        '2 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '1 tsp chana dal',
+        '2 green chilies, slit',
+        '1 medium onion, sliced (optional)',
+        '1/4 tsp turmeric powder',
+        '1/2 tsp red chili powder',
+        'Salt to taste',
+        'Coriander leaves for garnish'
+      ],
+      instructions: [
+        'Heat oil in a pan; add mustard seeds, urad dal, and chana dal.',
+        'When they turn golden, add green chilies and onions (if using); sauté until soft.',
+        'Add turmeric, red chili powder, and salt; mix quickly.',
+        'Add boiled potato cubes and toss gently to coat with the masala.',
+        'Cook for 5–7 minutes on low heat until edges turn slightly crisp.',
+        'Garnish with coriander leaves and serve hot.'
+      ]
+    },
+    {
+      id: 10,
+      title: 'Mix Veg Sabzi',
+      description: 'Hearty mixed vegetable curry with South Indian tadka',
+      prepTime: '15 min',
+      cookTime: '25 min',
+      servings: 4,
+      category: 'dinner',
+      ingredients: [
+        '2 cups mixed vegetables (beans, carrot, peas, potato, cauliflower)',
+        '2 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp cumin seeds',
+        '1 onion, finely chopped',
+        '2 tomatoes, chopped',
+        '1 tsp ginger-garlic paste',
+        '1/2 tsp turmeric powder',
+        '1 tsp coriander powder',
+        '1 tsp sambar powder or garam masala',
+        'Salt to taste',
+        'Coriander leaves for garnish'
+      ],
+      instructions: [
+        'Parboil or steam the mixed vegetables until just tender.',
+        'Heat oil, add mustard and cumin seeds; let them splutter.',
+        'Add onions and sauté until golden, then add ginger-garlic paste.',
+        'Add tomatoes and cook until soft and pulpy.',
+        'Add turmeric, coriander powder, sambar powder, and salt; mix well.',
+        'Add the cooked vegetables and a splash of water; simmer for 5–7 minutes.',
+        'Garnish with coriander leaves and serve.'
+      ]
+    },
+    {
+      id: 11,
+      title: 'Vangi Sabzi (Brinjal Curry)',
+      description: 'Spiced brinjal curry inspired by traditional vangi preparations',
+      prepTime: '15 min',
+      cookTime: '25 min',
+      servings: 4,
+      category: 'dinner',
+      ingredients: [
+        '8–10 small brinjals (eggplants), slit or cubed',
+        '2 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp cumin seeds',
+        '1 onion, finely sliced',
+        '1 tomato, chopped',
+        '1/4 tsp turmeric powder',
+        '1 tsp red chili powder',
+        '1 tsp coriander powder',
+        '1 tbsp tamarind pulp',
+        'Salt to taste',
+        'Coriander leaves for garnish'
+      ],
+      instructions: [
+        'Soak slit brinjals in salted water for 10 minutes and drain.',
+        'Heat oil, add mustard and cumin seeds; let them splutter.',
+        'Add onions and sauté until golden; then add tomatoes.',
+        'Add turmeric, red chili, coriander powder, and salt; cook until oil separates.',
+        'Add brinjals and toss to coat with masala.',
+        'Add tamarind pulp and a little water; cover and cook until brinjals are soft.',
+        'Garnish with coriander leaves and serve with rice or rotis.'
+      ]
+    },
+    {
+      id: 12,
+      title: 'Bhindi Sabzi',
+      description: 'Dry okra stir-fry with onions and a gentle spice mix',
+      prepTime: '15 min',
+      cookTime: '20 min',
+      servings: 4,
+      category: 'dinner',
+      ingredients: [
+        '400 g bhindi (okra), washed, dried, and sliced',
+        '2 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp cumin seeds',
+        '1 onion, thinly sliced',
+        '1/4 tsp turmeric powder',
+        '1/2 tsp red chili powder',
+        '1/2 tsp coriander powder',
+        '1/2 tsp amchur (dry mango powder) or lemon juice',
+        'Salt to taste'
+      ],
+      instructions: [
+        'Heat oil in a wide pan; add mustard and cumin seeds.',
+        'Add sliced onions and sauté until soft.',
+        'Add bhindi and cook on medium heat, stirring occasionally, until non-sticky.',
+        'Add turmeric, red chili, coriander powder, and salt; mix well.',
+        'Cook until bhindi is tender and slightly crisp at the edges.',
+        'Finish with amchur or a squeeze of lemon and serve hot.'
+      ]
+    },
+    {
+      id: 13,
+      title: 'Beans Sabzi',
+      description: 'Simple and comforting French beans stir-fry with coconut and spices',
+      prepTime: '10 min',
+      cookTime: '15 min',
+      servings: 4,
+      category: 'dinner',
+      ingredients: [
+        '3 cups French beans, finely chopped',
+        '1 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '2 dried red chilies or green chilies',
+        '8–10 curry leaves',
+        '1/4 tsp turmeric powder',
+        'Salt to taste',
+        '1/4 cup fresh grated coconut'
+      ],
+      instructions: [
+        'Heat oil in a pan and add mustard seeds.',
+        'When they splutter, add urad dal, chilies, and curry leaves; sauté until dal turns golden.',
+        'Add chopped beans, turmeric, and salt; mix well.',
+        'Sprinkle a little water, cover, and cook on low heat until beans are tender but still bright green.',
+        'Add grated coconut and sauté for 1–2 minutes.',
+        'Serve hot with rice, sambar, or rasam.'
       ]
     }
   ],
@@ -755,10 +1227,10 @@ function App() {
       )}
 
       {(currentView === 'categories' || currentView === 'category' || currentView === 'recipe') && (
-        <header className={`header ${currentView === 'categories' || currentView === 'category' ? 'header-categories' : ''}`}>
+        <header className="header header-categories">
           {currentView === 'categories' && (
             <button className="header-back-button" onClick={handleBackToHome} title="Back to Home">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
               </svg>
             </button>
@@ -772,21 +1244,12 @@ function App() {
           )}
           {currentView === 'recipe' && selectedRecipe && (
             <button className="header-back-button" onClick={handleBackToCategory} title={`Back to ${categories.find(c => c.id === selectedRecipe.category)?.name}`}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
               </svg>
             </button>
           )}
-          {(currentView === 'categories' || currentView === 'category') ? (
-            <h1 className="header-title-categories">Sasi's recipe book</h1>
-          ) : (
-            <>
-              <h1>
-                Sasi's South Indian Recipe Book
-              </h1>
-              <p>Authentic recipes from the heart of South India</p>
-            </>
-          )}
+          <h1 className="header-title-categories">Sasi's recipe book</h1>
         </header>
       )}
 
@@ -796,7 +1259,7 @@ function App() {
             <div className="category-magazine-layout">
               {categories.map((category, index) => {
                 const categoryImage = category.id === 'breakfast' ? '/images/chutneys_category_image.png' :
-                  category.id === 'lunch' ? '/images/sweets_category_image.png' :
+                  category.id === 'lunch' ? '/images/sweets_blur_category_image.png' :
                   category.id === 'dinner' ? '/images/sabzi_image.png' :
                   '/images/main_gravies_category_image.png'
                 
@@ -928,12 +1391,27 @@ function App() {
                              'What makes South Indian snacks unique?'}
                           </h3>
                           <p className="callout-text">
-                            {selectedCategory === 'breakfast' ? 'Freshly scraped coconut, roasted lentils, a tempering of mustard and curry leaves in gingelly oil, and the rhythm of hands on stone. Each family guards its own ratios, but the soul is always the same.' :
-                             selectedCategory === 'lunch' ? 'Jaggery instead of sugar, fresh coconut, ghee, and the patience of slow cooking. Each sweet carries the warmth of celebrations, the sweetness of traditions, and the love of generations.' :
-                             selectedCategory === 'dinner' ? 'Fresh vegetables, mustard seeds popping in hot oil, curry leaves releasing their aroma, and the perfect balance of spices. Each dish respects the vegetable while creating layers of flavor.' :
-                             'Crispy textures, bold spices, and the perfect balance of flavors. Made with rice flour, lentils, and traditional techniques that create that signature crunch and taste.'}
+                            {selectedCategory === 'breakfast' ? 'Freshly scraped coconut, roasted lentils, a tempering of mustard and curry leaves in gingelly oil, and the rhythm of hands on stone. Each family guards its own ratios, but the soul is always the same. These humble accompaniments transform simple meals into feasts, turning morning idlis and evening dosas into moments of pure comfort. Passed down through generations, each recipe carries the whispers of grandmothers and the warmth of home kitchens.' :
+                             selectedCategory === 'lunch' ? 'Jaggery instead of sugar, fresh coconut, ghee, and the patience of slow cooking. Each sweet carries the warmth of celebrations, the sweetness of traditions, and the love of generations. From the rich, fudgy texture of Mysore Pak to the delicate layers of Adhirasam, these confections mark every milestone. They are offerings at temples, gifts during festivals, and the quiet comfort of a rainy afternoon with a cup of filter coffee.' :
+                             selectedCategory === 'dinner' ? 'Fresh vegetables, mustard seeds popping in hot oil, curry leaves releasing their aroma, and the perfect balance of spices. Each dish respects the vegetable while creating layers of flavor. Whether it\'s a dry stir-fry that celebrates the crunch of beans or a rich, comforting gravy that wraps around rice, these sabzis are the heart of every South Indian meal. Cooked with care and served with love, they bring families together around the table.' :
+                             'Crispy textures, bold spices, and the perfect balance of flavors. Made with rice flour, lentils, and traditional techniques that create that signature crunch and taste. From the morning vada that pairs perfectly with sambar to the evening mixture that makes tea time special, these snacks are more than just food. They are memories of childhood, the sound of festivals, and the simple joy of sharing a plate with loved ones.'}
                           </p>
                         </div>
+                        
+                        {/* Modern CTA Button */}
+                        <button 
+                          className="explore-recipes-cta-modern"
+                          onClick={() => {
+                            const recipesSection = document.getElementById('recipes-section');
+                            if (recipesSection) {
+                              recipesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                          }}
+                        >
+                          <span className="cta-text">Explore recipes</span>
+                          <span className="cta-arrow">→</span>
+                          <span className="cta-shine"></span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -962,10 +1440,50 @@ function App() {
                         }
                         const difficulty = recipe.prepTime.includes('hours') ? 'Hard' : 
                           (parseInt(recipe.cookTime) || 0) < 20 ? 'Easy' : 'Medium'
-                        const categoryImage = selectedCategory === 'breakfast' ? '/images/chutneys_category_image.png' :
-                          selectedCategory === 'lunch' ? '/images/sweets_category_image.png' :
-                          selectedCategory === 'dinner' ? '/images/sabzi_image.png' :
-                          '/images/main_gravies_category_image.png'
+                        let categoryImage = '/images/chutneys_category_image.png'
+                        if (selectedCategory === 'breakfast') {
+                          if (recipe.title.toLowerCase().includes('coconut chutney')) {
+                            categoryImage = '/images/coconut_chutney.png'
+                          } else if (recipe.title.toLowerCase().includes('tomato chutney')) {
+                            categoryImage = '/images/red_tomato_chutney.png'
+                          } else if (recipe.title.toLowerCase().includes('coriander chutney')) {
+                            categoryImage = '/images/green_chutney.png'
+                          } else if (recipe.title.toLowerCase().includes('peanut chutney')) {
+                            categoryImage = '/images/peanut_chutney.png'
+                          }
+                        } else if (selectedCategory === 'lunch') {
+                          if (recipe.title.toLowerCase().includes('ashoka halwa')) {
+                            categoryImage = '/images/ashoka_halwa.png'
+                          } else if (recipe.title.toLowerCase().includes('puran poli')) {
+                            categoryImage = '/images/puran_poli.png'
+                          } else if (recipe.title.toLowerCase().includes('modhak')) {
+                            categoryImage = '/images/modhuka.png'
+                          } else if (recipe.title.toLowerCase().includes('payasam')) {
+                            categoryImage = '/images/rice_payasam.png'
+                          } else {
+                            categoryImage = '/images/sweets_category_image.png'
+                          }
+                        } else if (selectedCategory === 'dinner') {
+                          if (recipe.title.toLowerCase().includes('carrot')) {
+                            categoryImage = '/images/carrot_sabzi.png'
+                          } else if (recipe.title.toLowerCase().includes('beetroot')) {
+                            categoryImage = '/images/beetroot_sabzi.png'
+                          } else if (recipe.title.toLowerCase().includes('aloo')) {
+                            categoryImage = '/images/aalo_sabzi.png'
+                          } else if (recipe.title.toLowerCase().includes('mix veg')) {
+                            categoryImage = '/images/mix_veg_sabzi.png'
+                          } else if (recipe.title.toLowerCase().includes('vangi') || recipe.title.toLowerCase().includes('brinjal')) {
+                            categoryImage = '/images/brinjal_sabzi.png'
+                          } else if (recipe.title.toLowerCase().includes('bhindi')) {
+                            categoryImage = '/images/bhindi_sabzi.png'
+                          } else if (recipe.title.toLowerCase().includes('beans')) {
+                            categoryImage = '/images/beans_sabzi.png'
+                          } else {
+                            categoryImage = '/images/sabzi_image.png'
+                          }
+                        } else {
+                          categoryImage = '/images/main_gravies_category_image.png'
+                        }
                         return (
                           <div
                             key={recipe.id}
@@ -1011,7 +1529,7 @@ function App() {
         )}
 
         {currentView === 'recipe' && selectedRecipe && (
-          <RecipeDetail recipe={selectedRecipe} />
+          <RecipeDetail recipe={selectedRecipe} recipes={recipes} handleRecipeClick={handleRecipeClick} />
         )}
       </main>
 
