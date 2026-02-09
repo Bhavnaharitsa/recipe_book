@@ -929,7 +929,7 @@
 }
 
 .category-3 .magazine-image-container {
-  height: 220px;
+  height: 320px;
   order: 2;
   margin: 0;
 }
@@ -1647,6 +1647,136 @@
   filter: sepia(10%) saturate(105%) brightness(102%) contrast(98%);
 }
 
+/* Magazine-style text overlays */
+.magazine-overlay-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.magazine-overlay-top-left {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
+
+.magazine-overlay-top-right {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+}
+
+.magazine-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Inter', 'Lato', sans-serif;
+  opacity: 0.9;
+}
+
+.magazine-overlay-center {
+  position: absolute;
+  top: 4rem;
+  left: 2rem;
+  text-align: left;
+}
+
+.magazine-main-title {
+  font-size: 6rem;
+  font-weight: 700;
+  color: #FF6B35;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  margin: 0;
+  line-height: 0.9;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.category-hero-image-magazine[data-category="dinner"] .magazine-main-title {
+  color: #DC2626;
+}
+
+.magazine-subtitle {
+  font-size: 2rem;
+  font-weight: 300;
+  color: white;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin: 0.5rem 0 0 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.magazine-overlay-bottom-left {
+  position: absolute;
+  bottom: 3rem;
+  left: 2rem;
+  max-width: 350px;
+}
+
+.magazine-feature-title {
+  font-size: 3rem;
+  font-weight: 400;
+  color: white;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
+  text-transform: lowercase;
+  margin: 0 0 1rem 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.magazine-feature-text {
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: white;
+  font-family: 'Inter', 'Lato', sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0.95;
+}
+
+.magazine-overlay-bottom-right {
+  position: absolute;
+  bottom: 3rem;
+  right: 2rem;
+  max-width: 350px;
+  text-align: right;
+}
+
+.magazine-brand-title {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #FF6B35;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  margin: 0 0 1rem 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.category-hero-image-magazine[data-category="dinner"] .magazine-brand-title {
+  color: #DC2626;
+}
+
+.magazine-brand-text {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: white;
+  font-family: 'Inter', 'Lato', sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0.95;
+  font-style: italic;
+}
+
 /* Recipe Cards Section */
 .recipe-cards-section {
   margin-top: 2rem;
@@ -1844,6 +1974,36 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.explore-recipes-button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff0db;
+  background: #492201;
+  border: 2px solid #492201;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Inter', 'Lato', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(73, 34, 1, 0.2);
+}
+
+.explore-recipes-button:hover {
+  background: #5a2a02;
+  border-color: #5a2a02;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(73, 34, 1, 0.3);
+}
+
+.explore-recipes-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(73, 34, 1, 0.2);
 }
 
 .callout-title {
@@ -3232,5 +3392,233 @@
 
   .section-title {
     font-size: 1.8rem;
+  }
+}
+
+/* New Recipe Detail Layout */
+.recipe-detail-new-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  background: #fff0db;
+}
+
+.recipe-detail-new-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.recipe-category-tag {
+  display: inline-block;
+  background: rgba(139, 90, 60, 0.2);
+  color: #492201;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Inter', 'Lato', sans-serif;
+  margin-bottom: 1.5rem;
+}
+
+.recipe-detail-new-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #492201;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
+  margin: 0 0 1rem 0;
+  line-height: 1.2;
+}
+
+.recipe-detail-new-description {
+  font-size: 1.1rem;
+  color: #492201;
+  font-family: 'Inter', 'Lato', sans-serif;
+  line-height: 1.7;
+  margin: 0 0 2rem 0;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.recipe-detail-divider {
+  height: 1px;
+  background: rgba(73, 34, 1, 0.2);
+  margin: 2rem auto;
+  max-width: 800px;
+}
+
+.recipe-metrics-table {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  max-width: 800px;
+  margin: 2rem auto 0;
+  padding: 2rem 0;
+}
+
+.metric-item {
+  text-align: center;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #492201;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Inter', 'Lato', sans-serif;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+}
+
+.metric-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #492201;
+  font-family: 'Inter', 'Lato', sans-serif;
+}
+
+.recipe-detail-new-image {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 4rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-detail-main-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  filter: sepia(10%) saturate(105%) brightness(102%) contrast(98%);
+}
+
+.recipe-detail-new-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.recipe-ingredients-column,
+.recipe-instructions-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-icon {
+  font-size: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #492201;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
+  margin: 0;
+}
+
+.ingredient-group,
+.instruction-group {
+  margin-bottom: 2rem;
+}
+
+.ingredient-group-title,
+.instruction-group-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #492201;
+  font-family: 'Inter', 'Lato', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(73, 34, 1, 0.2);
+}
+
+.ingredients-list-new {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ingredients-list-new li {
+  padding: 0.75rem 0;
+  color: #492201;
+  font-family: 'Inter', 'Lato', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  border-bottom: 1px solid rgba(73, 34, 1, 0.1);
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.ingredients-list-new li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #492201;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.instructions-list-new {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: step-counter;
+}
+
+.instructions-list-new li {
+  counter-increment: step-counter;
+  padding: 1.25rem 0 1.25rem 3rem;
+  color: #492201;
+  font-family: 'Inter', 'Lato', sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+  border-bottom: 1px solid rgba(73, 34, 1, 0.1);
+  position: relative;
+}
+
+.instructions-list-new li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: 0;
+  top: 1.25rem;
+  width: 2rem;
+  height: 2rem;
+  background: #492201;
+  color: #fff0db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  font-family: 'Inter', 'Lato', sans-serif;
+}
+
+@media (max-width: 968px) {
+  .recipe-detail-new-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .recipe-metrics-table {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 }

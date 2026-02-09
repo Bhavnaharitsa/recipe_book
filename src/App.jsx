@@ -2,67 +2,154 @@ import { useState } from 'react'
 import './App.css'
 
 function RecipeDetail({ recipe }) {
-  const [activeTab, setActiveTab] = useState('ingredients')
-  
-  const categoryImage = recipe.category === 'breakfast' ? '/images/chutneys_image.png' :
-    recipe.category === 'lunch' ? '/images/sweets_image.png' :
+  const categoryImage = recipe.category === 'breakfast' ? '/images/chutneys_category_image.png' :
+    recipe.category === 'lunch' ? '/images/sweets_category_image.png' :
     recipe.category === 'dinner' ? '/images/sabzi_image.png' :
-    '/images/snacks_image.png'
+    '/images/main_gravies_category_image.png'
+
+  // Parse prep time and cook time
+  const parseTime = (timeStr) => {
+    if (!timeStr) return 'N/A'
+    const hoursMatch = timeStr.match(/(\d+)\s*hours?/i)
+    const minsMatch = timeStr.match(/(\d+)\s*min/i)
+    if (hoursMatch) return `${hoursMatch[1]} Hrs`
+    if (minsMatch) return `${minsMatch[1]} Mins`
+    return timeStr
+  }
+
+  const prepTime = parseTime(recipe.prepTime)
+  const cookTime = parseTime(recipe.cookTime)
+  
+  // Determine difficulty
+  const getDifficulty = () => {
+    const prepHours = recipe.prepTime?.match(/(\d+)\s*hours?/i)?.[1] || 0
+    const cookMins = parseInt(recipe.cookTime?.match(/(\d+)\s*min/i)?.[1] || 0)
+    if (prepHours > 0 || cookMins > 45) return 'Hard'
+    if (cookMins > 25) return 'Medium'
+    return 'Easy'
+  }
+
+  const difficulty = getDifficulty()
+  
+  // Get category name for tag
+  const categoryNames = {
+    breakfast: 'CHUTNEYS',
+    lunch: 'SWEETS',
+    dinner: 'SABZIS',
+    snacks: 'MAIN GRAVIES'
+  }
+
+  // Group ingredients by section (if they have section headers like "For Masala:")
+  const groupIngredients = () => {
+    const groups = []
+    let currentGroup = { title: null, items: [] }
+    
+    recipe.ingredients.forEach((ingredient) => {
+      if (ingredient.includes(':') && ingredient.length < 30) {
+        if (currentGroup.items.length > 0) {
+          groups.push(currentGroup)
+        }
+        currentGroup = { title: ingredient.replace(':', ''), items: [] }
+      } else {
+        currentGroup.items.push(ingredient)
+      }
+    })
+    
+    if (currentGroup.items.length > 0) {
+      groups.push(currentGroup)
+    }
+    
+    return groups.length > 0 ? groups : [{ title: null, items: recipe.ingredients }]
+  }
+
+  const ingredientGroups = groupIngredients()
+
+  // Group instructions by section (if needed)
+  const groupInstructions = () => {
+    // For now, just return all instructions as one group
+    // Can be enhanced later if instructions have sections
+    return [{ title: null, items: recipe.instructions }]
+  }
+
+  const instructionGroups = groupInstructions()
 
   return (
-    <div className="recipe-detail-container">
-      <div className="recipe-detail-image-section">
-        <div className="recipe-image-wrapper">
-          <img 
-            src={categoryImage} 
-            alt={recipe.title}
-            className="recipe-main-image"
-          />
+    <div className="recipe-detail-new-container">
+      {/* Header Section */}
+      <div className="recipe-detail-new-header">
+        <div className="recipe-category-tag">{categoryNames[recipe.category] || 'RECIPE'}</div>
+        <h1 className="recipe-detail-new-title">{recipe.title}</h1>
+        <p className="recipe-detail-new-description">{recipe.description}</p>
+        <div className="recipe-detail-divider"></div>
+        <div className="recipe-metrics-table">
+          <div className="metric-item">
+            <div className="metric-label">PREP TIME</div>
+            <div className="metric-value">{prepTime}</div>
+          </div>
+          <div className="metric-item">
+            <div className="metric-label">COOK TIME</div>
+            <div className="metric-value">{cookTime}</div>
+          </div>
+          <div className="metric-item">
+            <div className="metric-label">SERVINGS</div>
+            <div className="metric-value">{recipe.servings} People</div>
+          </div>
+          <div className="metric-item">
+            <div className="metric-label">DIFFICULTY</div>
+            <div className="metric-value">{difficulty}</div>
+          </div>
         </div>
       </div>
-      <div className="recipe-detail-content-section">
-        <div className="recipe-detail-header">
-          <h1>{recipe.title}</h1>
-          <p className="recipe-description">{recipe.description}</p>
+
+      {/* Main Image */}
+      <div className="recipe-detail-new-image">
+        <img 
+          src={categoryImage} 
+          alt={recipe.title}
+          className="recipe-detail-main-image"
+        />
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="recipe-detail-new-content">
+        {/* Left Column - Ingredients */}
+        <div className="recipe-ingredients-column">
+          <div className="section-header">
+            <span className="section-icon">🍲</span>
+            <h2 className="section-title">Ingredients</h2>
+          </div>
+          {ingredientGroups.map((group, groupIndex) => (
+            <div key={groupIndex} className="ingredient-group">
+              {group.title && (
+                <h3 className="ingredient-group-title">{group.title}</h3>
+              )}
+              <ul className="ingredients-list-new">
+                {group.items.map((ingredient, index) => (
+                  <li key={index}>{ingredient}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-        
-        <div className="recipe-tabs">
-          <div className="tab-buttons">
-            <button 
-              className={`tab-button ${activeTab === 'ingredients' ? 'active' : ''}`}
-              onClick={() => setActiveTab('ingredients')}
-            >
-              Ingredients
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'recipe' ? 'active' : ''}`}
-              onClick={() => setActiveTab('recipe')}
-            >
-              Recipe
-            </button>
+
+        {/* Right Column - Instructions */}
+        <div className="recipe-instructions-column">
+          <div className="section-header">
+            <span className="section-icon">👨‍🍳</span>
+            <h2 className="section-title">Instructions</h2>
           </div>
-          
-          <div className="tab-content">
-            {activeTab === 'ingredients' && (
-              <div className="tab-panel ingredients-panel">
-                <ul className="ingredients-list">
-                  {recipe.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {activeTab === 'recipe' && (
-              <div className="tab-panel recipe-panel">
-                <ol className="instructions-list">
-                  {recipe.instructions.map((instruction, index) => (
-                    <li key={index}>{instruction}</li>
-                  ))}
-                </ol>
-              </div>
-            )}
-          </div>
+          {instructionGroups.map((group, groupIndex) => (
+            <div key={groupIndex} className="instruction-group">
+              {group.title && (
+                <h3 className="instruction-group-title">{group.title}</h3>
+              )}
+              <ol className="instructions-list-new">
+                {group.items.map((instruction, index) => (
+                  <li key={index}>{instruction}</li>
+                ))}
+              </ol>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -668,7 +755,7 @@ function App() {
       )}
 
       {(currentView === 'categories' || currentView === 'category' || currentView === 'recipe') && (
-        <header className={`header ${currentView === 'categories' ? 'header-categories' : ''}`}>
+        <header className={`header ${currentView === 'categories' || currentView === 'category' ? 'header-categories' : ''}`}>
           {currentView === 'categories' && (
             <button className="header-back-button" onClick={handleBackToHome} title="Back to Home">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -678,7 +765,7 @@ function App() {
           )}
           {currentView === 'category' && (
             <button className="header-back-button" onClick={() => setCurrentView('categories')} title="Back to Categories">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
               </svg>
             </button>
@@ -690,7 +777,7 @@ function App() {
               </svg>
             </button>
           )}
-          {currentView === 'categories' ? (
+          {(currentView === 'categories' || currentView === 'category') ? (
             <h1 className="header-title-categories">Sasi's recipe book</h1>
           ) : (
             <>
@@ -776,16 +863,51 @@ function App() {
                   <div className="category-hero-section-magazine">
                     {/* Image and Title Row */}
                     <div className="category-hero-content-magazine">
-                      {/* Left: Hero Image (40%) */}
-                      <div className="category-hero-image-magazine">
+                      {/* Left: Hero Image with Text Overlays (60%) */}
+                      <div className="category-hero-image-magazine" data-category={selectedCategory}>
                         <img 
-                          src={selectedCategory === 'breakfast' ? '/images/chutneys_image.png' :
-                               selectedCategory === 'lunch' ? '/images/sweets_image.png' :
+                          src={selectedCategory === 'breakfast' ? '/images/chutneys_category_image.png' :
+                               selectedCategory === 'lunch' ? '/images/sweets_category_image.png' :
                                selectedCategory === 'dinner' ? '/images/sabzi_image.png' :
-                               '/images/snacks_image.png'}
+                               '/images/main_gravies_category_image.png'}
                           alt={categories.find(c => c.id === selectedCategory)?.name}
                           className="category-hero-img-magazine"
                         />
+                        {/* Magazine-style text overlays */}
+                        <div className="magazine-overlay-content">
+                          <div className="magazine-overlay-center">
+                            <h2 className="magazine-main-title">
+                              {selectedCategory === 'breakfast' ? 'MOOD' :
+                               selectedCategory === 'lunch' ? 'SWEET' :
+                               selectedCategory === 'dinner' ? 'SABZI' :
+                               'SNACKS'}
+                            </h2>
+                            <h3 className="magazine-subtitle">
+                              {selectedCategory === 'breakfast' ? 'CHUTNEYS' :
+                               selectedCategory === 'lunch' ? 'CELEBRATIONS' :
+                               selectedCategory === 'dinner' ? 'HARMONY' :
+                               'DELIGHTS'}
+                            </h3>
+                          </div>
+                          <div className="magazine-overlay-bottom-left">
+                            <h4 className="magazine-feature-title">new luxury</h4>
+                            <p className="magazine-feature-text">
+                              {selectedCategory === 'breakfast' ? 'A quiet ode to the side dishes that make every idli, dosa, and evening tiffin sing.' :
+                               selectedCategory === 'lunch' ? 'Celebrations wrapped in sweetness, where tradition meets the warmth of home.' :
+                               selectedCategory === 'dinner' ? 'The heart of South Indian vegetarian cuisine, where fresh vegetables meet aromatic spices.' :
+                               'Crispy, flavorful, and perfectly spiced - the snacks that make every tea time special.'}
+                            </p>
+                          </div>
+                          <div className="magazine-overlay-bottom-right">
+                            <h4 className="magazine-brand-title">RECIPES</h4>
+                            <p className="magazine-brand-text">
+                              {selectedCategory === 'breakfast' ? 'From coconut and coriander to tomato and gongura, all pounded slow on ammikal.' :
+                               selectedCategory === 'lunch' ? 'From creamy payasams to crumbly laddus, each sweet tells a story of festivals and family.' :
+                               selectedCategory === 'dinner' ? 'Each dish celebrates the harmony of flavors, from dry stir-fries to rich, comforting gravies.' :
+                               'From morning vadas to evening mixture, these treats bring people together.'}
+                            </p>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Right: Title and Card (60%) */}
@@ -817,11 +939,11 @@ function App() {
                   </div>
 
                   {/* Recipe Cards Section */}
-                  <div className="recipe-cards-section">
+                  <div id="recipes-section" className="recipe-cards-section">
                     <div className="recipe-section-header">
                       <div>
                         <h2 className="recipe-section-title">House-favourite {categories.find(c => c.id === selectedCategory)?.name.toLowerCase()}</h2>
-                        <p className="recipe-section-description">{currentRecipes.length} handpicked recipes to begin your journey.</p>
+                        <p className="recipe-section-description">Discover authentic flavors and time-honored traditions in every recipe.</p>
                       </div>
                     </div>
                     <div className="recipe-cards-grid-new">
@@ -840,10 +962,10 @@ function App() {
                         }
                         const difficulty = recipe.prepTime.includes('hours') ? 'Hard' : 
                           (parseInt(recipe.cookTime) || 0) < 20 ? 'Easy' : 'Medium'
-                        const categoryImage = selectedCategory === 'breakfast' ? '/images/chutneys_image.png' :
-                          selectedCategory === 'lunch' ? '/images/sweets_image.png' :
+                        const categoryImage = selectedCategory === 'breakfast' ? '/images/chutneys_category_image.png' :
+                          selectedCategory === 'lunch' ? '/images/sweets_category_image.png' :
                           selectedCategory === 'dinner' ? '/images/sabzi_image.png' :
-                          '/images/snacks_image.png'
+                          '/images/main_gravies_category_image.png'
                         return (
                           <div
                             key={recipe.id}
