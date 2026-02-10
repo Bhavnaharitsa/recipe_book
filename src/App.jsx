@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 
-function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
+function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes }) {
   const [showChecklist, setShowChecklist] = useState(false)
   const [checkedIngredients, setCheckedIngredients] = useState({})
   const [checkedSteps, setCheckedSteps] = useState({})
@@ -47,6 +47,23 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
         return '/images/beans_sabzi.png'
       }
       return '/images/sabzi_image.png'
+    } else if (recipe.category === 'snacks') {
+      if (recipe.title.toLowerCase().includes('rasam')) {
+        return '/images/rasam.png'
+      } else if (recipe.title.toLowerCase().includes('ponni sambar')) {
+        return '/images/ponni_sambar.png'
+      } else if (recipe.title.toLowerCase().includes('metho sambar') || recipe.title.toLowerCase().includes('methi sambar')) {
+        return '/images/methi_sambar.png'
+      } else if (recipe.title.toLowerCase().includes('sambar')) {
+        return '/images/sambar.png'
+      } else if (recipe.title.toLowerCase().includes('aviyal')) {
+        return '/images/aviyal.png'
+      } else if (recipe.title.toLowerCase().includes('bisi belle') || recipe.title.toLowerCase().includes('bisi bella')) {
+        return '/images/bisi_belle.png'
+      } else if (recipe.title.toLowerCase().includes('tamarind pulusu') || recipe.title.toLowerCase().includes('pulusu')) {
+        return '/images/tamarind_pulusu.png'
+      }
+      return '/images/main_gravies_category_image.png'
     }
     return '/images/main_gravies_category_image.png'
   }
@@ -112,9 +129,39 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
 
   // Group instructions by section (if needed)
   const groupInstructions = () => {
-    // For now, just return all instructions as one group
-    // Can be enhanced later if instructions have sections
-    return [{ title: null, items: recipe.instructions }]
+    const groups = []
+    let currentGroup = { title: null, items: [] }
+    
+    recipe.instructions.forEach((instruction) => {
+      // Check if instruction is a title (short, contains common cooking verbs, or ends with colon)
+      const isTitle = instruction.length < 50 && (
+        instruction.match(/^(Cook|Prepare|Boil|Simmer|Temper|Fry|Roast|Grind|Mix|Add|Heat|Serve)/i) ||
+        instruction.endsWith(':') ||
+        instruction.match(/^[A-Z][a-z]+(\s+[A-Z][a-z]+)*\s+(the|a|an)\s+/i)
+      )
+      
+      if (isTitle) {
+        // If we have items in current group, save it
+        if (currentGroup.items.length > 0) {
+          groups.push(currentGroup)
+        }
+        // Start new group with this title
+        currentGroup = { 
+          title: instruction.replace(':', '').trim(), 
+          items: [] 
+        }
+      } else {
+        // Add instruction to current group
+        currentGroup.items.push(instruction)
+      }
+    })
+    
+    // Add the last group
+    if (currentGroup.items.length > 0 || currentGroup.title) {
+      groups.push(currentGroup)
+    }
+    
+    return groups.length > 0 ? groups : [{ title: null, items: recipe.instructions }]
   }
 
   const instructionGroups = groupInstructions()
@@ -164,6 +211,43 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
       ...prev,
       [index]: !prev[index]
     }))
+  }
+
+  // Generate witty checklist title based on recipe
+  const getChecklistTitle = () => {
+    const title = recipe.title.toLowerCase()
+    const wittyTitles = [
+      "Let's Get Cooking!",
+      "Time to Cook!",
+      "Your Cooking Adventure",
+      "Ready, Set, Cook!",
+      "Let's Make Magic!",
+      "Cooking Time!",
+      "Your Recipe Roadmap",
+      "Let's Create Something Delicious!",
+      "Step by Step to Deliciousness",
+      "Your Cooking Checklist"
+    ]
+    
+    // Recipe-specific witty titles
+    if (title.includes('halwa')) {
+      return "Sweet Success Checklist"
+    } else if (title.includes('sambar') || title.includes('rasam') || title.includes('pulusu')) {
+      return "Spice It Up Checklist"
+    } else if (title.includes('sabzi') || title.includes('vegetable')) {
+      return "Veggie Victory Checklist"
+    } else if (title.includes('chutney')) {
+      return "Dip & Delight Checklist"
+    } else if (title.includes('poli') || title.includes('roti')) {
+      return "Roll It Right Checklist"
+    } else if (title.includes('vada') || title.includes('bonda')) {
+      return "Crispy Creation Checklist"
+    } else if (title.includes('payasam') || title.includes('kheer')) {
+      return "Sweet Dreams Checklist"
+    }
+    
+    // Return a random witty title
+    return wittyTitles[Math.floor(Math.random() * wittyTitles.length)]
   }
 
   // Get time display for related recipes
@@ -225,6 +309,23 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
         return '/images/beans_sabzi.png'
       }
       return '/images/sabzi_image.png'
+    } else if (relatedRecipe.category === 'snacks') {
+      if (relatedRecipe.title.toLowerCase().includes('rasam')) {
+        return '/images/rasam.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('ponni sambar')) {
+        return '/images/ponni_sambar.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('metho sambar') || relatedRecipe.title.toLowerCase().includes('methi sambar')) {
+        return '/images/methi_sambar.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('sambar')) {
+        return '/images/sambar.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('aviyal')) {
+        return '/images/aviyal.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('bisi belle') || relatedRecipe.title.toLowerCase().includes('bisi bella')) {
+        return '/images/bisi_belle.png'
+      } else if (relatedRecipe.title.toLowerCase().includes('tamarind pulusu') || relatedRecipe.title.toLowerCase().includes('pulusu')) {
+        return '/images/tamarind_pulusu.png'
+      }
+      return '/images/main_gravies_category_image.png'
     }
     return '/images/main_gravies_category_image.png'
   }
@@ -237,19 +338,20 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
         <p className="recipe-detail-new-description">{recipe.description}</p>
       </div>
 
-      {/* Main Image */}
-      <div className="recipe-detail-new-image">
-        <img 
-          src={categoryImage} 
-          alt={recipe.title}
-          className="recipe-detail-main-image"
-        />
-      </div>
-
       {/* Checklist Modal/Section */}
       {showChecklist && (
-        <div className="recipe-checklist-overlay">
-          <div className="recipe-checklist-container">
+        <div 
+          className="recipe-checklist-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowChecklist(false);
+            }
+          }}
+        >
+          <div 
+            className="recipe-checklist-container"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="checklist-header">
               <h2>Cooking Checklist</h2>
               <button 
@@ -309,12 +411,21 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
         </div>
       )}
 
-      {/* Two Column Layout */}
-      <div className="recipe-detail-new-content">
+      {/* Main Image at Top */}
+      <div className="recipe-detail-main-image-container">
+        <img 
+          src={categoryImage} 
+          alt={recipe.title}
+          className="recipe-detail-main-image"
+        />
+      </div>
+
+      {/* Two Column Layout: Ingredients (Left) and Instructions (Right) */}
+      <div className="recipe-detail-content-layout">
         {/* Left Column - Ingredients */}
         <div className="recipe-ingredients-column">
           <div className="section-header">
-            <span className="section-icon">🍲</span>
+            <img src="/images/ingredients_icon.png" alt="Ingredients" className="ingredients-icon" />
             <h2 className="section-title">Ingredients</h2>
           </div>
           {ingredientGroups.map((group, groupIndex) => (
@@ -323,9 +434,20 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
                 <h3 className="ingredient-group-title">{group.title}</h3>
               )}
               <ul className="ingredients-list-new">
-                {group.items.map((ingredient, index) => (
-                  <li key={index}>{ingredient}</li>
-                ))}
+                {group.items.map((ingredient, index) => {
+                  // Parse quantity and ingredient name
+                  const match = ingredient.match(/^([\d\/\s\.]+[a-z]*)\s+(.+)$/i);
+                  if (match) {
+                    const [, quantity, name] = match;
+                    return (
+                      <li key={index}>
+                        <span className="ingredient-quantity">{quantity}</span>
+                        <span className="ingredient-name"> {name}</span>
+                      </li>
+                    );
+                  }
+                  return <li key={index}>{ingredient}</li>;
+                })}
               </ul>
             </div>
           ))}
@@ -334,7 +456,7 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
         {/* Right Column - Instructions */}
         <div className="recipe-instructions-column">
           <div className="section-header">
-            <span className="section-icon">👨‍🍳</span>
+            <img src="/images/instructions_icon.png" alt="Instructions" className="instructions-icon" />
             <h2 className="section-title">Instructions</h2>
           </div>
           {instructionGroups.map((group, groupIndex) => (
@@ -342,11 +464,11 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
               {group.title && (
                 <h3 className="instruction-group-title">{group.title}</h3>
               )}
-              <ol className="instructions-list-new">
+              <div className="instructions-paragraph">
                 {group.items.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
+                  <p key={index} className="instruction-text">{instruction}</p>
                 ))}
-              </ol>
+              </div>
             </div>
           ))}
         </div>
@@ -364,41 +486,43 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick }) {
 
       {/* Complete the Meal Section */}
       <div className="complete-meal-section">
-        <div className="complete-meal-header">
-          <div className="complete-meal-title-section">
-            <h2 className="complete-meal-title">Complete the Meal</h2>
-            <p className="complete-meal-subtitle">Authentic pairings perfect for this dish.</p>
+        <div className="complete-meal-section-inner">
+          <div className="complete-meal-header">
+            <div className="complete-meal-title-section">
+              <h2 className="complete-meal-title">Complete the Meal</h2>
+              <p className="complete-meal-subtitle">Authentic pairings perfect for this dish.</p>
+            </div>
+            <button className="view-all-recipes-button" onClick={handleViewAllRecipes}>View All Recipes</button>
           </div>
-          <button className="view-all-recipes-button">View All Recipes</button>
-        </div>
-        <div className="complete-meal-cards">
-          {relatedRecipes.map((relatedRecipe) => (
-            <div
-              key={relatedRecipe.id}
-              className="complete-meal-card"
-              onClick={() => handleRecipeClick(relatedRecipe)}
-            >
-              <div className="complete-meal-card-image">
-                <img
-                  src={getCategoryImage(relatedRecipe)}
-                  alt={relatedRecipe.title}
-                />
-              </div>
-              <div className="complete-meal-card-content">
-                <h3 className="complete-meal-card-title">{relatedRecipe.title}</h3>
-                <div className="complete-meal-card-meta">
-                  <span className="complete-meal-card-time">
-                    <span className="time-icon">🕐</span>
-                    {getTimeDisplay(relatedRecipe)}
-                  </span>
-                  <span className={`complete-meal-card-difficulty difficulty-${getDifficultyDisplay(relatedRecipe).toLowerCase()}`}>
-                    {getDifficultyDisplay(relatedRecipe)}
-                  </span>
-                  <span className="complete-meal-card-arrow">→</span>
+          <div className="complete-meal-cards">
+            {relatedRecipes.map((relatedRecipe) => (
+              <div
+                key={relatedRecipe.id}
+                className="complete-meal-card"
+                onClick={() => handleRecipeClick(relatedRecipe)}
+              >
+                <div className="complete-meal-card-image">
+                  <img
+                    src={getCategoryImage(relatedRecipe)}
+                    alt={relatedRecipe.title}
+                  />
+                </div>
+                <div className="complete-meal-card-content">
+                  <h3 className="complete-meal-card-title">{relatedRecipe.title}</h3>
+                  <div className="complete-meal-card-meta">
+                    <span className="complete-meal-card-time">
+                      <span className="time-icon">🕐</span>
+                      {getTimeDisplay(relatedRecipe)}
+                    </span>
+                    <span className={`complete-meal-card-difficulty difficulty-${getDifficultyDisplay(relatedRecipe).toLowerCase()}`}>
+                      {getDifficultyDisplay(relatedRecipe)}
+                    </span>
+                    <span className="complete-meal-card-arrow">→</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -941,101 +1065,258 @@ const recipes = {
   ],
   snacks: [
     {
-      id: 9,
-      title: 'Medu Vada',
-      description: 'Crispy, fluffy lentil fritters - perfect tea-time snack',
-      prepTime: '4 hours (soaking)',
+      id: 14,
+      title: 'Rasam',
+      description: 'Tangy and aromatic South Indian soup with tamarind and spices',
+      prepTime: '10 min',
       cookTime: '20 min',
       servings: 4,
       category: 'snacks',
       ingredients: [
-        '2 cups urad dal',
-        '2 green chilies, chopped',
-        '1 inch ginger, grated',
-        'Peppercorns',
-        'Curry leaves, chopped',
+        '1/2 cup toor dal, cooked and mashed',
+        '1 lemon-sized tamarind, soaked',
+        '2 tomatoes, chopped',
+        '1 tsp rasam powder',
+        '1/2 tsp turmeric powder',
+        '1 tsp mustard seeds',
+        '1 tsp cumin seeds',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '2 cloves garlic, crushed',
+        '1/4 tsp asafoetida',
+        '2 tbsp coriander leaves, chopped',
         'Salt to taste',
-        'Oil for deep frying'
+        '2 tsp oil or ghee'
       ],
       instructions: [
-        'Soak urad dal for 4 hours',
-        'Grind to smooth, fluffy paste',
-        'Add salt and mix well',
-        'Add green chilies, ginger, peppercorns, curry leaves',
-        'Heat oil for deep frying',
-        'Wet hands, shape vadas with hole in center',
-        'Fry until golden brown and crispy',
-        'Drain on paper towel',
-        'Serve hot with coconut chutney and sambar'
+        'Extract tamarind juice and set aside',
+        'Heat oil in a pan, add mustard seeds',
+        'When they splutter, add cumin seeds, red chilies, curry leaves',
+        'Add garlic and asafoetida, sauté for a few seconds',
+        'Add chopped tomatoes and cook until soft',
+        'Add tamarind juice, rasam powder, turmeric, and salt',
+        'Add 2 cups water and bring to a boil',
+        'Add mashed dal and simmer for 5-7 minutes',
+        'Garnish with coriander leaves',
+        'Serve hot with rice'
       ]
     },
     {
-      id: 10,
-      title: 'Bonda',
-      description: 'Crispy potato-filled fritters from South India',
+      id: 15,
+      title: 'Sambar',
+      description: 'Classic South Indian lentil stew with vegetables and aromatic spices',
+      prepTime: '15 min',
+      cookTime: '30 min',
+      servings: 4,
+      category: 'snacks',
+      ingredients: [
+        '1/2 cup toor dal',
+        '1 cup mixed vegetables (drumstick, brinjal, okra, pumpkin)',
+        '1 lemon-sized tamarind, soaked',
+        '2 tbsp sambar powder',
+        '1/2 tsp turmeric powder',
+        '1 tsp mustard seeds',
+        '1 tsp fenugreek seeds',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1/4 tsp asafoetida',
+        '2 tbsp coriander leaves, chopped',
+        '1 tbsp oil',
+        'Salt to taste'
+      ],
+      instructions: [
+        'Pressure cook toor dal until soft and mash it',
+        'Soak tamarind in warm water and extract juice',
+        'Cook vegetables in tamarind water until tender',
+        'Add sambar powder, turmeric, and salt',
+        'Add mashed dal and simmer for 10 minutes',
+        'Heat oil in a small pan for tempering',
+        'Add mustard seeds, fenugreek seeds, red chilies, curry leaves, and asafoetida',
+        'Pour tempering over sambar',
+        'Garnish with coriander leaves',
+        'Serve hot with rice, idli, or dosa'
+      ]
+    },
+    {
+      id: 16,
+      title: 'Ponni Sambar',
+      description: 'Traditional sambar made with ponni rice and vegetables',
+      prepTime: '15 min',
+      cookTime: '30 min',
+      servings: 4,
+      category: 'snacks',
+      ingredients: [
+        '1/2 cup toor dal',
+        '1/4 cup ponni rice (raw rice)',
+        '1 cup mixed vegetables (drumstick, brinjal, okra)',
+        '1 lemon-sized tamarind, soaked',
+        '2 tbsp sambar powder',
+        '1/2 tsp turmeric powder',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1/4 tsp asafoetida',
+        '2 tbsp coriander leaves, chopped',
+        '1 tbsp oil',
+        'Salt to taste'
+      ],
+      instructions: [
+        'Pressure cook toor dal and ponni rice together until soft',
+        'Mash the dal and rice mixture',
+        'Soak tamarind in warm water and extract juice',
+        'Cook vegetables in tamarind water until tender',
+        'Add sambar powder, turmeric, and salt',
+        'Add mashed dal-rice mixture and simmer for 10 minutes',
+        'Heat oil for tempering, add mustard seeds, urad dal',
+        'Add red chilies, curry leaves, and asafoetida',
+        'Pour tempering over sambar',
+        'Garnish with coriander leaves and serve hot'
+      ]
+    },
+    {
+      id: 17,
+      title: 'Metho Sambar',
+      description: 'Fenugreek-flavored sambar with a distinct bitter-sweet taste',
+      prepTime: '15 min',
+      cookTime: '30 min',
+      servings: 4,
+      category: 'snacks',
+      ingredients: [
+        '1/2 cup toor dal',
+        '1 cup vegetables (drumstick, brinjal, okra)',
+        '2 tbsp fresh methi (fenugreek) leaves or 1 tsp dried',
+        '1 lemon-sized tamarind, soaked',
+        '2 tbsp sambar powder',
+        '1/2 tsp turmeric powder',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1/4 tsp asafoetida',
+        '2 tbsp coriander leaves, chopped',
+        '1 tbsp oil',
+        'Salt to taste'
+      ],
+      instructions: [
+        'Pressure cook toor dal until soft and mash it',
+        'If using fresh methi leaves, clean and chop them',
+        'Soak tamarind in warm water and extract juice',
+        'Cook vegetables in tamarind water until tender',
+        'Add methi leaves and cook for 2-3 minutes',
+        'Add sambar powder, turmeric, and salt',
+        'Add mashed dal and simmer for 10 minutes',
+        'Heat oil for tempering, add mustard seeds, urad dal',
+        'Add red chilies, curry leaves, and asafoetida',
+        'Pour tempering over sambar, garnish with coriander leaves',
+        'Serve hot with rice or idli'
+      ]
+    },
+    {
+      id: 18,
+      title: 'Aviyal',
+      description: 'Mixed vegetable curry in coconut and yogurt gravy - a Kerala specialty',
       prepTime: '20 min',
-      cookTime: '20 min',
+      cookTime: '25 min',
       servings: 4,
       category: 'snacks',
       ingredients: [
-        'For filling:',
-        '4 potatoes, boiled and mashed',
-        '1 onion, chopped',
-        '2 green chilies',
-        'Ginger, grated',
-        'Curry leaves',
-        'Turmeric, salt',
-        'For batter:',
-        '1 cup besan (gram flour)',
-        'Rice flour',
-        'Red chili powder',
-        'Salt',
-        'Water',
-        'Oil for frying'
+        '2 cups mixed vegetables (carrot, beans, drumstick, brinjal, raw banana, yam)',
+        '1 cup fresh grated coconut',
+        '3-4 green chilies',
+        '1 tsp cumin seeds',
+        '1/2 cup yogurt, beaten',
+        '1/2 tsp turmeric powder',
+        '8-10 curry leaves',
+        '2 tbsp coconut oil',
+        '1/4 tsp mustard seeds',
+        'Salt to taste'
       ],
       instructions: [
-        'Heat oil, add onions, green chilies, ginger',
-        'Add curry leaves, turmeric',
-        'Add mashed potatoes, salt, mix well',
-        'Make small balls of potato mixture',
-        'Make batter with besan, rice flour, spices',
-        'Dip potato balls in batter',
-        'Deep fry until golden and crispy',
-        'Serve hot with chutney'
+        'Cut vegetables into long, uniform pieces',
+        'Cook vegetables with turmeric, salt, and a little water until tender but not mushy',
+        'Grind coconut, green chilies, and cumin seeds to a coarse paste',
+        'Add the ground paste to cooked vegetables',
+        'Simmer for 5 minutes on low heat',
+        'Remove from heat and add beaten yogurt, mix gently',
+        'Heat coconut oil in a small pan',
+        'Add mustard seeds and curry leaves for tempering',
+        'Pour tempering over aviyal',
+        'Serve hot with rice or as a side dish'
       ]
     },
     {
-      id: 11,
-      title: 'Rava Upma',
-      description: 'Semolina-based savory breakfast or snack',
-      prepTime: '5 min',
-      cookTime: '15 min',
+      id: 19,
+      title: 'Bisi Belle Bath',
+      description: 'Spicy and flavorful rice-lentil one-pot meal from Karnataka',
+      prepTime: '20 min',
+      cookTime: '30 min',
       servings: 4,
       category: 'snacks',
       ingredients: [
-        '1 cup rava (semolina)',
-        '2 cups water',
-        '1 onion, chopped',
-        '2 green chilies',
-        'Ginger, grated',
-        'Curry leaves',
-        'Mustard seeds, urad dal',
-        'Cashews',
-        '2 tbsp oil',
-        'Salt to taste',
-        'Lemon juice'
+        '1 cup rice',
+        '1/2 cup toor dal',
+        '1 cup mixed vegetables (carrot, beans, peas, potato)',
+        '2 tbsp bisi belle bath powder',
+        '1 lemon-sized tamarind, soaked',
+        '1/2 tsp turmeric powder',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1/4 tsp asafoetida',
+        '2 tbsp ghee',
+        '2 tbsp cashews',
+        '2 tbsp coriander leaves, chopped',
+        'Salt to taste'
       ],
       instructions: [
-        'Dry roast rava until fragrant',
-        'Heat oil, add mustard seeds, urad dal',
-        'Add cashews, curry leaves',
-        'Add onions, green chilies, ginger',
-        'Sauté until onions are translucent',
-        'Add water, salt, bring to boil',
-        'Add roasted rava, stir continuously',
-        'Cook until water is absorbed',
-        'Add lemon juice, mix well',
-        'Serve hot'
+        'Pressure cook rice and toor dal together with 3 cups water',
+        'Soak tamarind in warm water and extract juice',
+        'Cook vegetables in tamarind water until tender',
+        'Add bisi belle bath powder, turmeric, and salt',
+        'Add cooked rice-dal mixture and mix well',
+        'Simmer for 5-7 minutes until everything comes together',
+        'Heat ghee in a pan, add cashews and fry until golden',
+        'Add mustard seeds, urad dal, red chilies, curry leaves, and asafoetida',
+        'Pour tempering over bisi belle bath',
+        'Garnish with coriander leaves and serve hot with papad or chips'
+      ]
+    },
+    {
+      id: 20,
+      title: 'Tamarind Pulusu',
+      description: 'Tangy tamarind-based curry with vegetables - a Telugu favorite',
+      prepTime: '15 min',
+      cookTime: '25 min',
+      servings: 4,
+      category: 'snacks',
+      ingredients: [
+        '1 cup vegetables (okra, brinjal, drumstick, or bottle gourd)',
+        '1 lemon-sized tamarind, soaked',
+        '2 tbsp jaggery, grated',
+        '1 tsp red chili powder',
+        '1/2 tsp turmeric powder',
+        '1 tsp mustard seeds',
+        '1 tsp fenugreek seeds',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1/4 tsp asafoetida',
+        '2 tbsp coriander leaves, chopped',
+        '2 tbsp oil',
+        'Salt to taste'
+      ],
+      instructions: [
+        'Soak tamarind in warm water and extract thick juice',
+        'Cut vegetables into pieces',
+        'Heat oil in a pan, add mustard seeds',
+        'When they splutter, add fenugreek seeds, red chilies, curry leaves, and asafoetida',
+        'Add vegetables and sauté for 2-3 minutes',
+        'Add tamarind juice, 1 cup water, turmeric, red chili powder, and salt',
+        'Bring to a boil and simmer until vegetables are cooked',
+        'Add jaggery and mix until dissolved',
+        'Simmer for another 5 minutes until the gravy thickens slightly',
+        'Garnish with coriander leaves and serve hot with rice'
       ]
     }
   ],
@@ -1177,6 +1458,7 @@ function App() {
   const handleRecipeClick = (recipe) => {
     setSelectedRecipe(recipe)
     setCurrentView('recipe')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleBackToHome = () => {
@@ -1188,6 +1470,13 @@ function App() {
   const handleBackToCategory = () => {
     setCurrentView('category')
     setSelectedRecipe(null)
+  }
+
+  const handleViewAllRecipes = () => {
+    setCurrentView('categories')
+    setSelectedCategory(null)
+    setSelectedRecipe(null)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const currentRecipes = selectedCategory ? recipes[selectedCategory] || [] : []
@@ -1481,6 +1770,24 @@ function App() {
                           } else {
                             categoryImage = '/images/sabzi_image.png'
                           }
+                        } else if (selectedCategory === 'snacks') {
+                          if (recipe.title.toLowerCase().includes('rasam')) {
+                            categoryImage = '/images/rasam.png'
+                          } else if (recipe.title.toLowerCase().includes('ponni sambar')) {
+                            categoryImage = '/images/ponni_sambar.png'
+                          } else if (recipe.title.toLowerCase().includes('metho sambar') || recipe.title.toLowerCase().includes('methi sambar')) {
+                            categoryImage = '/images/methi_sambar.png'
+                          } else if (recipe.title.toLowerCase().includes('sambar')) {
+                            categoryImage = '/images/sambar.png'
+                          } else if (recipe.title.toLowerCase().includes('aviyal')) {
+                            categoryImage = '/images/aviyal.png'
+                          } else if (recipe.title.toLowerCase().includes('bisi belle') || recipe.title.toLowerCase().includes('bisi bella')) {
+                            categoryImage = '/images/bisi_belle.png'
+                          } else if (recipe.title.toLowerCase().includes('tamarind pulusu') || recipe.title.toLowerCase().includes('pulusu')) {
+                            categoryImage = '/images/tamarind_pulusu.png'
+                          } else {
+                            categoryImage = '/images/main_gravies_category_image.png'
+                          }
                         } else {
                           categoryImage = '/images/main_gravies_category_image.png'
                         }
@@ -1529,7 +1836,7 @@ function App() {
         )}
 
         {currentView === 'recipe' && selectedRecipe && (
-          <RecipeDetail recipe={selectedRecipe} recipes={recipes} handleRecipeClick={handleRecipeClick} />
+          <RecipeDetail recipe={selectedRecipe} recipes={recipes} handleRecipeClick={handleRecipeClick} handleViewAllRecipes={handleViewAllRecipes} />
         )}
       </main>
 

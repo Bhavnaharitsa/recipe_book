@@ -725,7 +725,7 @@
 
 .info-strip-quote {
   font-size: 1.3rem;
-  color: #C41E3A;
+  color: #FF1744;
   line-height: 1.6;
   margin: 2rem 0 0 0;
   font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', cursive;
@@ -2056,8 +2056,8 @@
 
 .callout-title {
   font-size: 1.65rem;
-  font-weight: 400;
-  color: #C41E3A;
+  font-weight: 700;
+  color: #FF1744;
   font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
   font-style: italic;
   margin: 0 0 2rem 0;
@@ -3575,15 +3575,53 @@
 
 /* New Recipe Detail Layout */
 .recipe-detail-new-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 2rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 3rem 0 3rem 0;
   background: #fff0db;
+  overflow-x: visible;
 }
 
 .recipe-detail-new-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+  padding: 0 2rem 1rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.recipe-detail-new-title {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #492201;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
+  margin: 0 0 1rem 0;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.recipe-detail-new-description {
+  font-size: 1.2rem;
+  color: #6B3A15;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', cursive;
+  font-style: italic;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+  opacity: 0.85;
+  font-weight: 700;
+}
+
+.recipe-detail-new-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(107, 58, 21, 0.3) 20%, rgba(107, 58, 21, 0.3) 80%, transparent 100%);
 }
 
 .recipe-category-tag {
@@ -3600,25 +3638,6 @@
   margin-bottom: 1.5rem;
 }
 
-.recipe-detail-new-title {
-  font-size: 3rem;
-  font-weight: 700;
-  color: #492201;
-  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
-  margin: 0 0 1rem 0;
-  line-height: 1.2;
-}
-
-.recipe-detail-new-description {
-  font-size: 1.1rem;
-  color: #492201;
-  font-family: 'Inter', 'Lato', sans-serif;
-  line-height: 1.7;
-  margin: 0 0 2rem 0;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 .recipe-detail-divider {
   height: 1px;
@@ -3658,9 +3677,10 @@
   font-family: 'Inter', 'Lato', sans-serif;
 }
 
-.recipe-detail-new-image {
+/* Main Image at Top */
+.recipe-detail-main-image-container {
   width: 100%;
-  max-width: 700px;
+  max-width: 1200px;
   margin: 0 auto 4rem;
   border-radius: 12px;
   overflow: hidden;
@@ -3670,61 +3690,196 @@
 .recipe-detail-main-image {
   width: 100%;
   height: auto;
+  max-height: 600px;
   display: block;
   object-fit: cover;
   filter: sepia(10%) saturate(105%) brightness(102%) contrast(98%);
 }
 
-.recipe-detail-new-content {
+/* Two Column Layout: Ingredients (Left) and Instructions (Right) */
+.recipe-detail-content-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 2rem;
+  background: transparent;
+  align-items: start;
+  position: relative;
+  left: -40px;
 }
 
-.recipe-ingredients-column,
+.recipe-detail-content-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.recipe-detail-content-card::-webkit-scrollbar-track {
+  background: rgba(255, 240, 219, 0.3);
+  border-radius: 4px;
+}
+
+.recipe-detail-content-card::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #F7931E 0%, #C41E3A 100%);
+  border-radius: 4px;
+}
+
+.recipe-detail-content-card::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #C41E3A 0%, #F7931E 100%);
+}
+
+.recipe-ingredients-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  background: #8B7355;
+  border-radius: 12px;
+  padding: 2.5rem;
+  margin-left: 0;
+  height: fit-content;
+  align-self: start;
+  width: fit-content;
+  min-width: 400px;
+  align-items: flex-start;
+}
+
 .recipe-instructions-column {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 0;
+  position: relative;
+  background: transparent;
+  border-radius: 0;
+  padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+  max-width: 100%;
+  margin-right: 0;
 }
 
 .section-header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.recipe-ingredients-column .section-header {
+  margin-bottom: 0.75rem;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  text-align: left;
 }
 
 .section-icon {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  opacity: 0.9;
+  filter: sepia(20%) saturate(80%);
+}
+
+.ingredients-icon {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  margin-right: -1.5rem;
+  margin-top: -10px;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.instructions-icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  margin-right: -1.5rem;
+  margin-top: -10px;
+  align-self: center;
+  flex-shrink: 0;
 }
 
 .section-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #492201;
+  color: #4A4A4A;
   font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
   margin: 0;
+  letter-spacing: -0.2px;
+  position: relative;
 }
 
-.ingredient-group,
+.recipe-ingredients-column .section-title {
+  color: #ffffff;
+  text-align: left;
+}
+
+.recipe-instructions-column .section-title {
+  color: #492201;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
+}
+
+.recipe-instructions-column .section-header {
+  margin-bottom: 2.5rem;
+}
+
+.recipe-instructions-column .section-icon {
+  font-size: 1.5rem;
+  color: #8B7355;
+  opacity: 1;
+}
+
 .instruction-group {
+  margin-bottom: 2.5rem;
+}
+
+.instruction-group:last-child {
+  margin-bottom: 0;
+}
+
+.ingredient-group {
   margin-bottom: 2rem;
 }
 
-.ingredient-group-title,
-.instruction-group-title {
-  font-size: 1.1rem;
+.recipe-ingredients-column .ingredient-group {
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+}
+
+.recipe-ingredients-column .ingredient-group:first-of-type {
+  margin-top: 0;
+}
+
+.ingredient-group-title {
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #492201;
+  color: #6B6B6B;
   font-family: 'Inter', 'Lato', sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0 0 1rem 0;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(73, 34, 1, 0.2);
+  position: relative;
+  display: block;
+}
+
+.instruction-group-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #492201;
+  font-family: 'Inter', 'Lato', sans-serif;
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0 0 0.75rem 0;
+  padding-bottom: 0;
+  position: relative;
+  display: block;
+  line-height: 1.4;
+}
+
+.recipe-ingredients-column .ingredient-group-title {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .ingredients-list-new {
@@ -3733,79 +3888,80 @@
   margin: 0;
 }
 
-.ingredients-list-new li {
-  padding: 0.85rem 1.25rem;
-  color: #492201;
-  font-family: 'Inter', 'Lato', sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
-  padding-left: 1.75rem;
-  position: relative;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-  margin-bottom: 0.75rem;
-}
-
-.ingredients-list-new li::before {
-  content: '';
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: #C41E3A;
-  box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.18);
-}
-
-.instructions-list-new {
+.ingredients-list-new {
   list-style: none;
   padding: 0;
   margin: 0;
-  counter-reset: step-counter;
+  background: transparent;
 }
 
-.instructions-list-new li {
-  counter-increment: step-counter;
-  padding: 1.1rem 1.25rem 1.1rem 3.25rem;
-  color: #492201;
+.ingredients-list-new li {
+  padding: 0.75rem 0;
+  color: #ffffff;
   font-family: 'Inter', 'Lato', sans-serif;
   font-size: 1rem;
-  line-height: 1.8;
+  line-height: 1.6;
   position: relative;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.04);
-  margin-bottom: 0.9rem;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+  margin-bottom: 0;
+  display: flex;
+  align-items: baseline;
 }
 
-.instructions-list-new li::before {
-  content: counter(step-counter);
-  position: absolute;
-  left: 0.85rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2.1rem;
-  height: 2.1rem;
+.ingredients-list-new li:last-child {
+  border-bottom: none;
+}
+
+.ingredients-list-new li::before {
+  display: none;
+}
+
+.ingredients-list-new li:hover {
   background: transparent;
-  color: #492201;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
+  box-shadow: none;
+  border-left-color: transparent;
+  transform: none;
+}
+
+.ingredient-quantity {
+  color: #FFD700;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.ingredient-name {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 400;
+}
+
+.instructions-paragraph {
+  padding: 0;
+  margin: 0;
+}
+
+.instruction-text {
+  padding: 0;
+  margin: 0 0 1rem 0;
+  color: #4A4A4A;
   font-family: 'Inter', 'Lato', sans-serif;
-  border: 2px solid rgba(73, 34, 1, 0.25);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  font-size: 1rem;
+  line-height: 1.7;
+  font-weight: 400;
+  text-align: left;
+}
+
+.instruction-text:last-child {
+  margin-bottom: 0;
 }
 
 /* Do This Recipe Now Button */
 .recipe-action-section {
   text-align: center;
   margin: 3rem 0 1.5rem;
+  padding: 0 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .do-recipe-now-button {
@@ -3848,47 +4004,66 @@
 }
 
 .recipe-checklist-container {
-  background: #fff0db;
-  border-radius: 16px;
-  max-width: 800px;
+  background: #f5f0e8;
+  border-radius: 12px;
+  max-width: 700px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .checklist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 2rem 1rem;
-  border-bottom: 2px solid rgba(73, 34, 1, 0.1);
+  padding: 1.75rem 2rem 1.25rem;
+  border-bottom: 1px solid rgba(73, 34, 1, 0.15);
+  position: sticky;
+  top: 0;
+  background: #f5f0e8;
+  z-index: 10;
+  border-radius: 12px 12px 0 0;
 }
 
 .checklist-header h2 {
   font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
-  font-size: 2rem;
+  font-size: 1.75rem;
   color: #492201;
   margin: 0;
   font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .checklist-close {
   background: none;
   border: none;
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: #492201;
   cursor: pointer;
   line-height: 1;
   padding: 0;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s ease;
+  font-weight: 300;
 }
 
 .checklist-close:hover {
@@ -3897,11 +4072,11 @@
 }
 
 .checklist-content {
-  padding: 2rem;
+  padding: 1.5rem 2rem 2rem;
 }
 
 .checklist-section {
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
 }
 
 .checklist-section:last-child {
@@ -3909,13 +4084,15 @@
 }
 
 .checklist-section-title {
-  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
-  font-size: 1.5rem;
+  font-family: 'Inter', 'Lato', sans-serif;
+  font-size: 1.225rem;
   color: #492201;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1.25rem 0;
   font-weight: 700;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid rgba(73, 34, 1, 0.2);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(73, 34, 1, 0.2);
+  text-transform: none;
+  letter-spacing: 0.3px;
 }
 
 .checklist-items {
@@ -3925,38 +4102,44 @@
 }
 
 .checklist-item {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.checklist-item:last-child {
+  margin-bottom: 0;
 }
 
 .checklist-label {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 0.75rem;
   cursor: pointer;
-  padding: 0.75rem;
-  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
   transition: background 0.2s ease;
 }
 
 .checklist-label:hover {
-  background: rgba(73, 34, 1, 0.05);
+  background: rgba(73, 34, 1, 0.04);
 }
 
 .checklist-checkbox {
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
   cursor: pointer;
   accent-color: #492201;
   flex-shrink: 0;
+  border: 2px solid rgba(73, 34, 1, 0.3);
+  border-radius: 3px;
 }
 
 .checklist-label span {
   flex: 1;
   font-family: 'Inter', 'Lato', sans-serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #492201;
-  line-height: 1.6;
+  line-height: 1.5;
   transition: all 0.2s ease;
 }
 
@@ -3986,10 +4169,33 @@
 /* Complete the Meal Section */
 .complete-meal-section {
   margin-top: 5rem;
-  padding: 3rem 2rem;
-  border-top: 2px solid rgba(73, 34, 1, 0.1);
-  background: #fff0db;
-  border-radius: 12px;
+  padding: 3rem 0;
+  background: #ffffff;
+  border-radius: 0;
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  left: 0;
+  right: 0;
+}
+
+.complete-meal-section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.complete-meal-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  width: calc(100% - 32px);
+  height: 2px;
+  background: #ffffff;
 }
 
 .complete-meal-header {
@@ -4053,7 +4259,7 @@
 }
 
 .complete-meal-card {
-  background: #fff0db;
+  background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -4140,8 +4346,9 @@
 }
 
 .difficulty-hard {
-  background: rgba(196, 30, 58, 0.15);
-  color: #C41E3A;
+  background: rgba(255, 23, 68, 0.15);
+  color: #FF1744;
+  font-weight: 700;
 }
 
 .complete-meal-card-arrow {
@@ -4156,9 +4363,13 @@
 }
 
 @media (max-width: 968px) {
-  .recipe-detail-new-content {
+  .recipe-detail-content-layout {
     grid-template-columns: 1fr;
     gap: 3rem;
+  }
+
+  .recipe-detail-main-image-container {
+    margin-bottom: 3rem;
   }
 
   .recipe-metrics-table {
