@@ -62,6 +62,14 @@
   padding-left: 2rem;
 }
 
+.front-page-icon {
+  width: 120px;
+  height: auto;
+  margin-bottom: 2rem;
+  display: block;
+  object-fit: contain;
+}
+
 .main-title {
   font-size: 4.5rem;
   font-weight: 700;
@@ -559,6 +567,19 @@
 .header-categories .header-title-categories::before,
 .header-categories .header-title-categories::after {
   display: none;
+}
+
+.header-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-mandala-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: #D4B89C;
 }
 
 .main-content {

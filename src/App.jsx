@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes }) {
@@ -1446,30 +1446,80 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectedRecipe, setSelectedRecipe] = useState(null)
 
+  // Initialize browser history
+  useEffect(() => {
+    // Set initial history state
+    if (window.history.state === null) {
+      window.history.replaceState({ view: 'home', category: null, recipe: null }, '', window.location.href)
+    }
+
+    // Handle browser back/forward buttons
+    const handlePopState = (event) => {
+      if (event.state) {
+        const { view, category, recipe } = event.state
+        setCurrentView(view || 'home')
+        setSelectedCategory(category || null)
+        if (recipe) {
+          const allRecipes = [
+            ...(recipes.breakfast || []),
+            ...(recipes.lunch || []),
+            ...(recipes.dinner || []),
+            ...(recipes.snacks || [])
+          ]
+          const foundRecipe = allRecipes.find(r => r.id === recipe)
+          setSelectedRecipe(foundRecipe || null)
+        } else {
+          setSelectedRecipe(null)
+        }
+        window.scrollTo({ top: 0, behavior: 'instant' })
+      } else {
+        // Fallback to home if no state
+        setCurrentView('home')
+        setSelectedCategory(null)
+        setSelectedRecipe(null)
+      }
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [recipes])
+
+  // Helper function to update history
+  const updateHistory = (view, category = null, recipe = null) => {
+    window.history.pushState({ view, category, recipe }, '', window.location.href)
+  }
+
   const handleCategoryClick = (categoryId) => {
     setSelectedCategory(categoryId)
     setCurrentView('category')
+    updateHistory('category', categoryId, null)
   }
 
   const handleGetCooking = () => {
     setCurrentView('categories')
+    updateHistory('categories', null, null)
   }
 
   const handleRecipeClick = (recipe) => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
     setSelectedRecipe(recipe)
     setCurrentView('recipe')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    updateHistory('recipe', recipe.category, recipe.id)
   }
 
   const handleBackToHome = () => {
     setCurrentView('home')
     setSelectedCategory(null)
     setSelectedRecipe(null)
+    updateHistory('home', null, null)
   }
 
   const handleBackToCategory = () => {
     setCurrentView('category')
     setSelectedRecipe(null)
+    if (selectedRecipe) {
+      updateHistory('category', selectedRecipe.category, null)
+    }
   }
 
   const handleViewAllRecipes = () => {
@@ -1477,6 +1527,7 @@ function App() {
     setSelectedCategory(null)
     setSelectedRecipe(null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    updateHistory('categories', null, null)
   }
 
   const currentRecipes = selectedCategory ? recipes[selectedCategory] || [] : []
@@ -1487,6 +1538,11 @@ function App() {
         <div className="homepage-split">
           <div className="home-left">
             <div className="home-content">
+              <img 
+                src="/images/front_page_icon.png" 
+                alt="Front page icon" 
+                className="front-page-icon"
+              />
               <h1 className="main-title">
                 <span>Savor Every Bite</span>
                 <span>with Sasi's</span>
@@ -1538,7 +1594,19 @@ function App() {
               </svg>
             </button>
           )}
-          <h1 className="header-title-categories">Sasi's recipe book</h1>
+          <div className="header-title-wrapper">
+            <svg 
+              className="header-mandala-icon"
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M12 2L14.09 8.26L22 9.27L17 14.14L18.18 22.02L12 18.77L5.82 22.02L7 14.14L2 9.27L9.91 8.26L12 2Z" fill="#D4B89C" opacity="0.9"/>
+            </svg>
+            <h1 className="header-title-categories">Sasi's recipe book</h1>
+          </div>
         </header>
       )}
 
