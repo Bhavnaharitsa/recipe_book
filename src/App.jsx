@@ -64,6 +64,9 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes
         return '/images/tamarind_pulusu.png'
       }
       return '/images/main_gravies_category_image.png'
+    } else if (recipe.category === 'quick-foods') {
+      // Use a default quick foods image or category image
+      return '/images/chutneys_category_image.png'
     }
     return '/images/main_gravies_category_image.png'
   }
@@ -99,7 +102,8 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes
     breakfast: 'CHUTNEYS',
     lunch: 'SWEETS',
     dinner: 'SABZIS',
-    snacks: 'MAIN GRAVIES'
+    snacks: 'MAIN GRAVIES',
+    'quick-foods': 'QUICK FOODS'
   }
 
   // Group ingredients by section (if they have section headers like "For Masala:")
@@ -172,7 +176,8 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes
       ...(recipes.breakfast || []),
       ...(recipes.lunch || []),
       ...(recipes.dinner || []),
-      ...(recipes.snacks || [])
+      ...(recipes.snacks || []),
+      ...(recipes['quick-foods'] || [])
     ]
     // Filter out current recipe and get 3 related recipes
     return allRecipes
@@ -326,6 +331,9 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes
         return '/images/tamarind_pulusu.png'
       }
       return '/images/main_gravies_category_image.png'
+    } else if (relatedRecipe.category === 'quick-foods') {
+      // Use a default quick foods image or category image
+      return '/images/chutneys_category_image.png'
     }
     return '/images/main_gravies_category_image.png'
   }
@@ -557,6 +565,13 @@ const categories = [
     icon: '🍿',
     description: 'Crispy and delicious South Indian snacks',
     color: '#FFD700'
+  },
+  {
+    id: 'quick-foods',
+    name: '15mins Quick Fun Foods',
+    icon: '⚡',
+    description: 'Easy and quick recipes ready in 15 minutes or less',
+    color: '#FF6B9D'
   }
 ]
 
@@ -1320,6 +1335,195 @@ const recipes = {
       ]
     }
   ],
+  'quick-foods': [
+    {
+      id: 21,
+      title: 'Quick Lemon Rice',
+      description: 'Tangy and flavorful lemon rice ready in minutes',
+      prepTime: '5 min',
+      cookTime: '10 min',
+      servings: 2,
+      category: 'quick-foods',
+      ingredients: [
+        '1 cup cooked rice (preferably day-old)',
+        '2 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '1 tsp chana dal',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1/4 tsp turmeric powder',
+        '2 tbsp lemon juice',
+        'Salt to taste',
+        'Coriander leaves for garnish'
+      ],
+      instructions: [
+        'Heat oil in a pan, add mustard seeds and let them splutter',
+        'Add urad dal and chana dal, fry until golden',
+        'Add dried red chilies and curry leaves',
+        'Add turmeric powder and mix well',
+        'Add cooked rice and salt, mix gently',
+        'Add lemon juice and mix until rice is evenly coated',
+        'Garnish with coriander leaves and serve hot'
+      ]
+    },
+    {
+      id: 22,
+      title: 'Instant Rava Upma',
+      description: 'Quick and delicious semolina upma for a perfect breakfast',
+      prepTime: '5 min',
+      cookTime: '10 min',
+      servings: 2,
+      category: 'quick-foods',
+      ingredients: [
+        '1 cup rava (semolina)',
+        '2 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '1 onion, finely chopped',
+        '1 green chili, chopped',
+        '1/2 inch ginger, grated',
+        '8-10 curry leaves',
+        '2 cups hot water',
+        'Salt to taste',
+        'Coriander leaves and lemon wedges for garnish'
+      ],
+      instructions: [
+        'Dry roast rava in a pan until light golden, set aside',
+        'Heat oil in the same pan, add mustard seeds',
+        'When they splutter, add urad dal and fry until golden',
+        'Add chopped onion, green chili, ginger, and curry leaves',
+        'Sauté until onions are translucent',
+        'Add hot water and salt, bring to a boil',
+        'Add roasted rava gradually, stirring continuously',
+        'Cover and cook on low heat for 2-3 minutes',
+        'Garnish with coriander leaves and serve with lemon wedges'
+      ]
+    },
+    {
+      id: 23,
+      title: 'Quick Poha',
+      description: 'Light and fluffy flattened rice breakfast with vegetables',
+      prepTime: '5 min',
+      cookTime: '10 min',
+      servings: 2,
+      category: 'quick-foods',
+      ingredients: [
+        '1 cup thick poha (flattened rice)',
+        '2 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 onion, finely chopped',
+        '1 green chili, chopped',
+        '1/4 tsp turmeric powder',
+        '8-10 curry leaves',
+        '2 tbsp peanuts',
+        'Salt to taste',
+        'Coriander leaves and lemon juice for garnish'
+      ],
+      instructions: [
+        'Wash poha in water and drain immediately, set aside',
+        'Heat oil in a pan, add mustard seeds',
+        'When they splutter, add peanuts and fry until golden',
+        'Add chopped onion and green chili, sauté until soft',
+        'Add turmeric powder and curry leaves',
+        'Add drained poha and salt, mix gently',
+        'Cook for 2-3 minutes on low heat',
+        'Garnish with coriander leaves and lemon juice, serve hot'
+      ]
+    },
+    {
+      id: 24,
+      title: 'Quick Tomato Rice',
+      description: 'Simple and tangy tomato rice with aromatic spices',
+      prepTime: '5 min',
+      cookTime: '10 min',
+      servings: 2,
+      category: 'quick-foods',
+      ingredients: [
+        '1 cup cooked rice',
+        '2 large tomatoes, chopped',
+        '2 tbsp oil',
+        '1 tsp mustard seeds',
+        '1 tsp urad dal',
+        '1 tsp chana dal',
+        '2 dried red chilies',
+        '8-10 curry leaves',
+        '1/2 tsp turmeric powder',
+        '1 tsp red chili powder',
+        'Salt to taste',
+        'Coriander leaves for garnish'
+      ],
+      instructions: [
+        'Heat oil in a pan, add mustard seeds and let them splutter',
+        'Add urad dal, chana dal, and fry until golden',
+        'Add dried red chilies and curry leaves',
+        'Add chopped tomatoes and cook until soft',
+        'Add turmeric, red chili powder, and salt',
+        'Cook until tomatoes are mushy and oil separates',
+        'Add cooked rice and mix gently until well combined',
+        'Garnish with coriander leaves and serve hot'
+      ]
+    },
+    {
+      id: 25,
+      title: 'Instant Masala Toast',
+      description: 'Crispy and spicy toast perfect for a quick snack',
+      prepTime: '5 min',
+      cookTime: '5 min',
+      servings: 2,
+      category: 'quick-foods',
+      ingredients: [
+        '4 slices bread',
+        '2 tbsp butter',
+        '1 onion, finely chopped',
+        '1 green chili, chopped',
+        '1/4 tsp turmeric powder',
+        '1/2 tsp red chili powder',
+        '1/2 tsp garam masala',
+        'Salt to taste',
+        'Coriander leaves, chopped'
+      ],
+      instructions: [
+        'Heat butter in a pan, add chopped onion and green chili',
+        'Sauté until onions are translucent',
+        'Add turmeric, red chili powder, garam masala, and salt',
+        'Mix well and cook for a minute',
+        'Spread the masala mixture on bread slices',
+        'Heat a tawa or pan, place bread slices masala side down',
+        'Cook until crispy and golden',
+        'Garnish with coriander leaves and serve hot'
+      ]
+    },
+    {
+      id: 26,
+      title: 'Quick Fruit Salad',
+      description: 'Fresh and healthy fruit salad with a hint of spice',
+      prepTime: '10 min',
+      cookTime: '0 min',
+      servings: 2,
+      category: 'quick-foods',
+      ingredients: [
+        '1 apple, chopped',
+        '1 banana, sliced',
+        '1 orange, segmented',
+        '1/2 cup pomegranate seeds',
+        '1/2 cup grapes, halved',
+        '1 tsp lemon juice',
+        '1/2 tsp chaat masala (optional)',
+        '1 tsp honey (optional)',
+        'Fresh mint leaves for garnish'
+      ],
+      instructions: [
+        'Wash and chop all fruits into bite-sized pieces',
+        'Mix all fruits in a bowl',
+        'Add lemon juice to prevent browning',
+        'Add chaat masala and honey if using',
+        'Toss gently to combine',
+        'Garnish with fresh mint leaves',
+        'Serve immediately or chill before serving'
+      ]
+    }
+  ],
   desserts: [
     {
       id: 12,
@@ -1595,16 +1799,11 @@ function App() {
             </button>
           )}
           <div className="header-title-wrapper">
-            <svg 
+            <img 
+              src="/images/chef_hat_logo.png" 
+              alt="Chef hat logo" 
               className="header-mandala-icon"
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M12 2L14.09 8.26L22 9.27L17 14.14L18.18 22.02L12 18.77L5.82 22.02L7 14.14L2 9.27L9.91 8.26L12 2Z" fill="#D4B89C" opacity="0.9"/>
-            </svg>
+            />
             <h1 className="header-title-categories">Sasi's recipe book</h1>
           </div>
         </header>
@@ -1616,8 +1815,9 @@ function App() {
             <div className="category-magazine-layout">
               {categories.map((category, index) => {
                 const categoryImage = category.id === 'breakfast' ? '/images/chutneys_category_image.png' :
-                  category.id === 'lunch' ? '/images/sweets_blur_category_image.png' :
+                  category.id === 'lunch' ? '/images/sweets_category_image.png' :
                   category.id === 'dinner' ? '/images/sabzi_image.png' :
+                  category.id === 'quick-foods' ? '/images/chutneys_category_image.png' :
                   '/images/main_gravies_category_image.png'
                 
                 return (
@@ -1689,6 +1889,7 @@ function App() {
                           src={selectedCategory === 'breakfast' ? '/images/chutneys_category_image.png' :
                                selectedCategory === 'lunch' ? '/images/sweets_category_image.png' :
                                selectedCategory === 'dinner' ? '/images/sabzi_image.png' :
+                               selectedCategory === 'quick-foods' ? '/images/chutneys_category_image.png' :
                                '/images/main_gravies_category_image.png'}
                           alt={categories.find(c => c.id === selectedCategory)?.name}
                           className="category-hero-img-magazine"
@@ -1700,12 +1901,14 @@ function App() {
                               {selectedCategory === 'breakfast' ? 'MOOD' :
                                selectedCategory === 'lunch' ? 'SWEET' :
                                selectedCategory === 'dinner' ? 'SABZI' :
+                               selectedCategory === 'quick-foods' ? 'QUICK' :
                                'SNACKS'}
                             </h2>
                             <h3 className="magazine-subtitle">
                               {selectedCategory === 'breakfast' ? 'CHUTNEYS' :
                                selectedCategory === 'lunch' ? 'CELEBRATIONS' :
                                selectedCategory === 'dinner' ? 'HARMONY' :
+                               selectedCategory === 'quick-foods' ? 'FOODS' :
                                'DELIGHTS'}
                             </h3>
                           </div>
@@ -1715,6 +1918,7 @@ function App() {
                               {selectedCategory === 'breakfast' ? 'A quiet ode to the side dishes that make every idli, dosa, and evening tiffin sing.' :
                                selectedCategory === 'lunch' ? 'Celebrations wrapped in sweetness, where tradition meets the warmth of home.' :
                                selectedCategory === 'dinner' ? 'The heart of South Indian vegetarian cuisine, where fresh vegetables meet aromatic spices.' :
+                               selectedCategory === 'quick-foods' ? 'Fast, fun, and flavorful - quick recipes that bring joy to your table in minutes.' :
                                'Crispy, flavorful, and perfectly spiced - the snacks that make every tea time special.'}
                             </p>
                           </div>
@@ -1724,6 +1928,7 @@ function App() {
                               {selectedCategory === 'breakfast' ? 'From coconut and coriander to tomato and gongura, all pounded slow on ammikal.' :
                                selectedCategory === 'lunch' ? 'From creamy payasams to crumbly laddus, each sweet tells a story of festivals and family.' :
                                selectedCategory === 'dinner' ? 'Each dish celebrates the harmony of flavors, from dry stir-fries to rich, comforting gravies.' :
+                               selectedCategory === 'quick-foods' ? 'From lemon rice to instant upma, these quick recipes are perfect for busy days and hungry moments.' :
                                'From morning vadas to evening mixture, these treats bring people together.'}
                             </p>
                           </div>
@@ -1736,6 +1941,7 @@ function App() {
                           {selectedCategory === 'breakfast' ? 'Stone-Ground Chutneys of the South' :
                            selectedCategory === 'lunch' ? 'Traditional Sweets of South India' :
                            selectedCategory === 'dinner' ? 'Vegetable Curries & Sabzis' :
+                           selectedCategory === 'quick-foods' ? '15-Minute Quick Fun Foods' :
                            'Crispy Snacks & Delights'}
                         </h1>
                         
@@ -1745,12 +1951,14 @@ function App() {
                             {selectedCategory === 'breakfast' ? 'What makes a chutney "authentically" South Indian?' :
                              selectedCategory === 'lunch' ? 'What makes sweets special in South Indian culture?' :
                              selectedCategory === 'dinner' ? 'What defines authentic South Indian sabzis?' :
+                             selectedCategory === 'quick-foods' ? 'What makes these quick recipes special?' :
                              'What makes South Indian snacks unique?'}
                           </h3>
                           <p className="callout-text">
                             {selectedCategory === 'breakfast' ? 'Freshly scraped coconut, roasted lentils, a tempering of mustard and curry leaves in gingelly oil, and the rhythm of hands on stone. Each family guards its own ratios, but the soul is always the same. These humble accompaniments transform simple meals into feasts, turning morning idlis and evening dosas into moments of pure comfort. Passed down through generations, each recipe carries the whispers of grandmothers and the warmth of home kitchens.' :
                              selectedCategory === 'lunch' ? 'Jaggery instead of sugar, fresh coconut, ghee, and the patience of slow cooking. Each sweet carries the warmth of celebrations, the sweetness of traditions, and the love of generations. From the rich, fudgy texture of Mysore Pak to the delicate layers of Adhirasam, these confections mark every milestone. They are offerings at temples, gifts during festivals, and the quiet comfort of a rainy afternoon with a cup of filter coffee.' :
                              selectedCategory === 'dinner' ? 'Fresh vegetables, mustard seeds popping in hot oil, curry leaves releasing their aroma, and the perfect balance of spices. Each dish respects the vegetable while creating layers of flavor. Whether it\'s a dry stir-fry that celebrates the crunch of beans or a rich, comforting gravy that wraps around rice, these sabzis are the heart of every South Indian meal. Cooked with care and served with love, they bring families together around the table.' :
+                             selectedCategory === 'quick-foods' ? 'Simple ingredients, minimal prep time, and maximum flavor. These recipes are perfect for busy mornings, quick lunches, or when you need something delicious in a hurry. From tangy lemon rice to fluffy upma, each dish comes together in 15 minutes or less without compromising on taste. They prove that great food doesn\'t always need hours of cooking - sometimes, the best meals are the ones that come together quickly and bring instant satisfaction.' :
                              'Crispy textures, bold spices, and the perfect balance of flavors. Made with rice flour, lentils, and traditional techniques that create that signature crunch and taste. From the morning vada that pairs perfectly with sambar to the evening mixture that makes tea time special, these snacks are more than just food. They are memories of childhood, the sound of festivals, and the simple joy of sharing a plate with loved ones.'}
                           </p>
                         </div>
@@ -1856,6 +2064,8 @@ function App() {
                           } else {
                             categoryImage = '/images/main_gravies_category_image.png'
                           }
+                        } else if (selectedCategory === 'quick-foods') {
+                          categoryImage = '/images/chutneys_category_image.png'
                         } else {
                           categoryImage = '/images/main_gravies_category_image.png'
                         }
@@ -1888,6 +2098,9 @@ function App() {
                                 )}
                                 {selectedCategory === 'snacks' && (
                                   <span className="recipe-tag-new">{difficulty === 'Hard' ? 'Festive' : 'Quick'}</span>
+                                )}
+                                {selectedCategory === 'quick-foods' && (
+                                  <span className="recipe-tag-new">15 Mins</span>
                                 )}
                               </div>
                             </div>
