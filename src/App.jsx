@@ -2083,15 +2083,17 @@ function App() {
             />
             <h1 className="header-title-categories">Sasi's recipe book</h1>
           </div>
-          <button 
-            className="header-what-to-cook-button"
-            onClick={() => {
-              setCurrentView('meal-recommender')
-              updateHistory('meal-recommender', null, null)
-            }}
-          >
-            What to cook?
-          </button>
+          {currentView !== 'meal-recommender' && (
+            <button 
+              className="header-what-to-cook-button"
+              onClick={() => {
+                setCurrentView('meal-recommender')
+                updateHistory('meal-recommender', null, null)
+              }}
+            >
+              What to cook?
+            </button>
+          )}
         </header>
       )}
 
@@ -2436,33 +2438,27 @@ function App() {
                 {/* Hero Section with Dark Brown Background */}
                 <div className="meal-recommender-hero">
                   <div className="meal-recommender-hero-content">
-                    <p className="meal-recommender-est">~ Est. Since Grandmother's Kitchen ~</p>
                     <h1 className="meal-recommender-hero-title">Discover the Timeless Flavors of South India</h1>
                     <p className="meal-recommender-hero-description">
-                      From the crispy dosas of Tamil Nadu to the aromatic biryanis of Hyderabad, from the tangy rasam of Karnataka to the coconut-laden curries of Kerala — embark on a culinary journey through centuries of tradition.
+                      From the comforting chutneys that grace every breakfast table to the festive sweets that mark our celebrations, from the everyday sabzis that fill our homes with warmth to the soulful gravies that bring families together — these are the recipes that have been passed down through generations, each one a story of home, love, and the simple joy of good food.
                     </p>
                   </div>
                 </div>
 
-                {/* Editor's Note Section */}
-                <div className="meal-recommender-editors-note">
-                  <div className="editors-note-label">
-                    <span className="editors-note-line"></span>
-                    <span className="editors-note-text">EDITOR'S NOTE</span>
-                    <span className="editors-note-line"></span>
-                  </div>
-                  <h2 className="editors-note-title">What Should I Cook Today?</h2>
-                  <p className="editors-note-subtitle">The Question That Haunts Every Kitchen</p>
-                </div>
+            {/* What Should I Cook Section */}
+            <div className="meal-recommender-editors-note">
+              <h2 className="editors-note-title">What Should I Cook Today?</h2>
+              <p className="editors-note-subtitle">The Question That Haunts Every Kitchen</p>
+            </div>
 
-                {/* Problem Statement Section */}
-                <div className="meal-recommender-problem-section">
+            {/* Problem Statement Section */}
+            <div className="meal-recommender-problem-section">
                   <div className="problem-text-block">
                     <p className="problem-text-italic">
-                      Young professionals don't lack recipes. They lack mental bandwidth. After a long day of decisions, the last thing you need is another choice to make.
+                      You have the recipes. You have the ingredients. What you don't have after a long day is the mental energy to decide what to cook. The question "What should I make today?" shouldn't add to your exhaustion—it should be answered for you.
                     </p>
                     <p className="problem-text">
-                      We understand the exhaustion of standing before your pantry, wondering what to prepare. That's why we've created something special — an intelligent companion that considers your time, your dietary needs, your ingredients, and even your mood to suggest the perfect South Indian meal.
+                      We've all been there: standing in front of the pantry, ingredients in hand, but completely drained from making decisions all day. That's why we built something different—a smart meal recommender that understands your time constraints, your dietary preferences, what you already have at home, and even your mood. No more decision fatigue. Just a perfect South Indian meal plan, ready when you need it.
                     </p>
                   </div>
                 </div>
