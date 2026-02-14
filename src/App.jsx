@@ -2025,20 +2025,117 @@ function App() {
               <p className="home-description">
                 These recipes are easy to follow, beginner friendly, and made with simple ingredients you already know. Whether you are learning to cook or just want reliable home food, you will find dishes that actually work and taste like home.
               </p>
-              <button className="get-cooking-button" onClick={handleGetCooking}>
-                <span>Get Cooking</span>
-              </button>
+              <div className="home-cta-buttons">
+                <button className="get-cooking-button" onClick={handleGetCooking}>
+                  <span>Get Cooking</span>
+                  <svg className="button-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </button>
+                <button 
+                  className="what-to-cook-home-button" 
+                  onClick={() => {
+                    setCurrentView('meal-recommender')
+                    updateHistory('meal-recommender', null, null)
+                  }}
+                >
+                  <span>What to cook?</span>
+                </button>
+              </div>
             </div>
           </div>
           <div className="divider-line"></div>
           <div className="home-right">
-            <div className="food-photography">
-              <div className="food-item main-frame">
-                <img 
-                  src="/images/main_frame.png" 
-                  alt="Main frame" 
-                  className="food-image main-frame-image"
-                />
+            <div className="food-collage-grid">
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.1s' }}
+                onClick={() => handleCategoryClick('breakfast')}
+              >
+                <img src="/images/coconut_chutney.png" alt="Chutney" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Chutneys</span>
+                </div>
+              </div>
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.2s' }}
+                onClick={() => handleCategoryClick('lunch')}
+              >
+                <img src="/images/ashoka_halwa.png" alt="Sweet" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Sweets</span>
+                </div>
+              </div>
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.3s' }}
+                onClick={() => handleCategoryClick('dinner')}
+              >
+                <img src="/images/carrot_sabzi.png" alt="Sabzi" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Sabzis</span>
+                </div>
+              </div>
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.4s' }}
+                onClick={() => handleCategoryClick('snacks')}
+              >
+                <img src="/images/rasam.png" alt="Gravy" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Gravies</span>
+                </div>
+              </div>
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.5s' }}
+                onClick={() => handleCategoryClick('breakfast')}
+              >
+                <img src="/images/red_tomato_chutney.png" alt="Chutney" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Chutneys</span>
+                </div>
+              </div>
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.6s' }}
+                onClick={() => handleCategoryClick('lunch')}
+              >
+                <img src="/images/puran_poli.png" alt="Sweet" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Sweets</span>
+                </div>
+              </div>
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.7s' }}
+                onClick={() => handleCategoryClick('dinner')}
+              >
+                <img src="/images/mix_veg_sabzi.png" alt="Sabzi" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Sabzis</span>
+                </div>
+              </div>
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.8s' }}
+                onClick={() => handleCategoryClick('snacks')}
+              >
+                <img src="/images/sambar.png" alt="Gravy" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Gravies</span>
+                </div>
+              </div>
+              <div 
+                className="food-collage-item" 
+                style={{ animationDelay: '0.9s' }}
+                onClick={() => handleCategoryClick('quick-foods')}
+              >
+                <img src="/images/chutneys_category_image.png" alt="Quick Food" className="collage-image" />
+                <div className="collage-overlay">
+                  <span className="collage-label">Quick Foods</span>
+                </div>
               </div>
             </div>
           </div>
