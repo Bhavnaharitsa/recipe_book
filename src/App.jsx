@@ -5,6 +5,7 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes
   const [showChecklist, setShowChecklist] = useState(false)
   const [checkedIngredients, setCheckedIngredients] = useState({})
   const [checkedSteps, setCheckedSteps] = useState({})
+  const [activeTab, setActiveTab] = useState('ingredients')
 
   // Get the correct image for the recipe
   const getRecipeImage = () => {
@@ -428,57 +429,70 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes
         />
       </div>
 
-      {/* Two Column Layout: Ingredients (Left) and Instructions (Right) */}
-      <div className="recipe-detail-content-layout">
-        {/* Left Column - Ingredients */}
-        <div className="recipe-ingredients-column">
-          <div className="section-header">
-            <img src="/images/ingredients_icon.png" alt="Ingredients" className="ingredients-icon" />
-            <h2 className="section-title">Ingredients</h2>
-          </div>
-          {ingredientGroups.map((group, groupIndex) => (
-            <div key={groupIndex} className="ingredient-group">
-              {group.title && (
-                <h3 className="ingredient-group-title">{group.title}</h3>
-              )}
-              <ul className="ingredients-list-new">
-                {group.items.map((ingredient, index) => {
-                  // Parse quantity and ingredient name
-                  const match = ingredient.match(/^([\d\/\s\.]+[a-z]*)\s+(.+)$/i);
-                  if (match) {
-                    const [, quantity, name] = match;
-                    return (
-                      <li key={index}>
-                        <span className="ingredient-quantity">{quantity}</span>
-                        <span className="ingredient-name"> {name}</span>
-                      </li>
-                    );
-                  }
-                  return <li key={index}>{ingredient}</li>;
-                })}
-              </ul>
-            </div>
-          ))}
+      {/* Tab View: Ingredients and Instructions */}
+      <div className="recipe-tab-container">
+        <div className="recipe-tab-buttons">
+          <button 
+            className={`recipe-tab-button ${activeTab === 'ingredients' ? 'active' : ''}`}
+            onClick={() => setActiveTab('ingredients')}
+          >
+            <img src="/images/ingredients_icon.png" alt="Ingredients" className="tab-icon" />
+            Ingredients
+          </button>
+          <button 
+            className={`recipe-tab-button ${activeTab === 'instructions' ? 'active' : ''}`}
+            onClick={() => setActiveTab('instructions')}
+          >
+            <img src="/images/instructions_icon.png" alt="Instructions" className="tab-icon" />
+            Instructions
+          </button>
         </div>
 
-        {/* Right Column - Instructions */}
-        <div className="recipe-instructions-column">
-          <div className="section-header">
-            <img src="/images/instructions_icon.png" alt="Instructions" className="instructions-icon" />
-            <h2 className="section-title">Instructions</h2>
-          </div>
-          {instructionGroups.map((group, groupIndex) => (
-            <div key={groupIndex} className="instruction-group">
-              {group.title && (
-                <h3 className="instruction-group-title">{group.title}</h3>
-              )}
-              <div className="instructions-paragraph">
-                {group.items.map((instruction, index) => (
-                  <p key={index} className="instruction-text">{instruction}</p>
-                ))}
-              </div>
+        <div className="recipe-tab-content">
+          {activeTab === 'ingredients' && (
+            <div className="recipe-tab-panel">
+              {ingredientGroups.map((group, groupIndex) => (
+                <div key={groupIndex} className="ingredient-group">
+                  {group.title && (
+                    <h3 className="ingredient-group-title">{group.title}</h3>
+                  )}
+                  <ul className="ingredients-list-new">
+                    {group.items.map((ingredient, index) => {
+                      // Parse quantity and ingredient name
+                      const match = ingredient.match(/^([\d\/\s\.]+[a-z]*)\s+(.+)$/i);
+                      if (match) {
+                        const [, quantity, name] = match;
+                        return (
+                          <li key={index}>
+                            <span className="ingredient-quantity">{quantity}</span>
+                            <span className="ingredient-name"> {name}</span>
+                          </li>
+                        );
+                      }
+                      return <li key={index}>{ingredient}</li>;
+                    })}
+                  </ul>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
+
+          {activeTab === 'instructions' && (
+            <div className="recipe-tab-panel">
+              {instructionGroups.map((group, groupIndex) => (
+                <div key={groupIndex} className="instruction-group">
+                  {group.title && (
+                    <h3 className="instruction-group-title">{group.title}</h3>
+                  )}
+                  <div className="instructions-paragraph">
+                    {group.items.map((instruction, index) => (
+                      <p key={index} className="instruction-text">{instruction}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -1646,9 +1660,17 @@ const recipes = {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState('home') // 'home', 'categories', 'category', 'recipe'
+  const [currentView, setCurrentView] = useState('home') // 'home', 'categories', 'category', 'recipe', 'meal-recommender'
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectedRecipe, setSelectedRecipe] = useState(null)
+  const [recommenderForm, setRecommenderForm] = useState({
+    time: '',
+    diet: '',
+    ingredients: '',
+    spiceTolerance: '',
+    mood: ''
+  })
+  const [mealRecommendation, setMealRecommendation] = useState(null)
 
   // Initialize browser history
   useEffect(() => {
@@ -1668,7 +1690,8 @@ function App() {
             ...(recipes.breakfast || []),
             ...(recipes.lunch || []),
             ...(recipes.dinner || []),
-            ...(recipes.snacks || [])
+            ...(recipes.snacks || []),
+            ...(recipes['quick-foods'] || [])
           ]
           const foundRecipe = allRecipes.find(r => r.id === recipe)
           setSelectedRecipe(foundRecipe || null)
@@ -1734,6 +1757,253 @@ function App() {
     updateHistory('categories', null, null)
   }
 
+  // Smart Meal Recommendation Logic
+  const generateMealRecommendation = () => {
+    const { time, diet, ingredients, spiceTolerance, mood } = recommenderForm
+    
+    // Get all recipes flattened
+    const allRecipes = [
+      ...(recipes.breakfast || []).map(r => ({...r, category: 'breakfast'})),
+      ...(recipes.lunch || []).map(r => ({...r, category: 'lunch'})),
+      ...(recipes.dinner || []).map(r => ({...r, category: 'dinner'})),
+      ...(recipes.snacks || []).map(r => ({...r, category: 'snacks'})),
+      ...(recipes['quick-foods'] || []).map(r => ({...r, category: 'quick-foods'}))
+    ]
+    
+    // Normalize ingredient names for better matching
+    const normalizeIngredient = (ing) => {
+      const normalized = ing.toLowerCase().trim()
+      // Handle common variations
+      const variations = {
+        'egg': ['egg', 'eggs'],
+        'onion': ['onion', 'onions'],
+        'cauliflower': ['cauliflower', 'gobi'],
+        'tomato': ['tomato', 'tomatoes'],
+        'potato': ['potato', 'potatoes', 'aloo'],
+        'carrot': ['carrot', 'carrots'],
+        'beans': ['beans', 'green beans', 'french beans'],
+        'coconut': ['coconut', 'coco'],
+        'dal': ['dal', 'dhal', 'dahl'],
+        'rice': ['rice'],
+        'poha': ['poha', 'flattened rice'],
+        'rava': ['rava', 'semolina', 'sooji']
+      }
+      
+      // Find matching variation
+      for (const [key, values] of Object.entries(variations)) {
+        if (values.some(v => normalized.includes(v) || v.includes(normalized))) {
+          return key
+        }
+      }
+      return normalized
+    }
+    
+    // Check if recipe contains ingredient (with better matching)
+    const recipeContainsIngredient = (recipe, ingredient) => {
+      const normalizedIng = normalizeIngredient(ingredient)
+      const recipeText = (recipe.ingredients?.join(' ') + ' ' + recipe.title + ' ' + recipe.description).toLowerCase()
+      
+      // Direct match
+      if (recipeText.includes(normalizedIng)) return true
+      
+      // Check for variations
+      const variations = {
+        'egg': ['egg', 'eggs'],
+        'onion': ['onion', 'onions'],
+        'cauliflower': ['cauliflower', 'gobi'],
+        'tomato': ['tomato', 'tomatoes'],
+        'potato': ['potato', 'potatoes', 'aloo'],
+        'carrot': ['carrot', 'carrots'],
+        'beans': ['beans', 'green beans', 'french beans'],
+        'coconut': ['coconut', 'coco'],
+        'dal': ['dal', 'dhal', 'dahl', 'chana dal', 'urad dal', 'moong dal'],
+        'rice': ['rice'],
+        'poha': ['poha', 'flattened rice'],
+        'rava': ['rava', 'semolina', 'sooji']
+      }
+      
+      if (variations[normalizedIng]) {
+        return variations[normalizedIng].some(v => recipeText.includes(v))
+      }
+      
+      // Partial word match (e.g., "cauliflower" in "mixed vegetables (beans, carrot, peas, potato, cauliflower)")
+      const words = normalizedIng.split(' ')
+      return words.some(word => {
+        if (word.length < 3) return false
+        return recipeText.includes(word)
+      })
+    }
+    
+    // Score recipe based on criteria
+    const scoreRecipe = (recipe) => {
+      let score = 0
+      
+      // Time matching (higher score for better time match)
+      if (time) {
+        const totalTime = parseInt(recipe.prepTime?.match(/\d+/)?.[0] || 0) + 
+                         parseInt(recipe.cookTime?.match(/\d+/)?.[0] || 0)
+        if (time === '15' && totalTime <= 15) score += 10
+        else if (time === '30' && totalTime <= 30) score += 8
+        else if (time === 'sunday') score += 5 // Sunday special - any time is fine
+        else if (time === '15' && totalTime > 15) return -100 // Exclude if too long
+        else if (time === '30' && totalTime > 30) return -100 // Exclude if too long
+      }
+      
+      // Ingredient matching (higher score for more matches)
+      if (ingredients) {
+        const userIngredients = ingredients.toLowerCase().split(',').map(i => i.trim()).filter(i => i)
+        let ingredientMatches = 0
+        userIngredients.forEach(ing => {
+          if (recipeContainsIngredient(recipe, ing)) {
+            ingredientMatches++
+            score += 15 // High weight for ingredient matches
+          }
+        })
+        // Bonus if multiple ingredients match
+        if (ingredientMatches === userIngredients.length && userIngredients.length > 0) {
+          score += 20 // Perfect match bonus
+        }
+        // Penalize if no ingredients match and user provided ingredients
+        if (ingredientMatches === 0 && userIngredients.length > 0) {
+          score -= 50 // Heavy penalty
+        }
+      }
+      
+      // Diet matching
+      if (diet) {
+        const recipeText = (recipe.title + ' ' + recipe.description + ' ' + recipe.ingredients?.join(' ')).toLowerCase()
+        
+        if (diet === 'egg') {
+          if (recipeText.includes('egg')) score += 10
+          else score -= 5
+        } else if (diet === 'veg') {
+          // Vegetarian - exclude if contains meat/fish
+          if (recipeText.match(/\b(chicken|meat|fish|prawn|shrimp|mutton|beef|pork)\b/)) {
+            score -= 100
+          } else {
+            score += 5
+          }
+        } else if (diet === 'high-protein') {
+          const proteinKeywords = ['dal', 'dal', 'egg', 'paneer', 'tofu', 'chickpea', 'lentil']
+          if (proteinKeywords.some(kw => recipeText.includes(kw))) score += 10
+        } else if (diet === 'pcos') {
+          // PCOS friendly - prefer low glycemic, high fiber
+          const pcosFriendly = ['dal', 'vegetable', 'sabzi', 'beans', 'cauliflower']
+          if (pcosFriendly.some(kw => recipeText.includes(kw))) score += 10
+        }
+      }
+      
+      // Spice tolerance
+      if (spiceTolerance) {
+        const recipeText = (recipe.title + ' ' + recipe.description + ' ' + recipe.ingredients?.join(' ')).toLowerCase()
+        const spicyKeywords = ['chili', 'chilies', 'spicy', 'hot', 'pepper', 'red chilies', 'green chilies']
+        const isSpicy = spicyKeywords.some(kw => recipeText.includes(kw))
+        
+        if (spiceTolerance === 'mild' && isSpicy) {
+          score -= 10 // Prefer less spicy
+        } else if (spiceTolerance === 'hot' && !isSpicy) {
+          score -= 5 // Prefer spicy
+        } else if (spiceTolerance === 'medium') {
+          score += 5 // Medium is flexible
+        }
+      }
+      
+      // Mood matching
+      if (mood) {
+        const recipeText = (recipe.title + ' ' + recipe.description).toLowerCase()
+        if (mood === 'comfort') {
+          const comfortKeywords = ['halwa', 'sweet', 'puri', 'poli', 'rich', 'fudgy']
+          if (comfortKeywords.some(kw => recipeText.includes(kw))) score += 10
+        } else if (mood === 'light') {
+          const lightKeywords = ['light', 'fresh', 'sabzi', 'vegetable', 'stir-fry']
+          if (lightKeywords.some(kw => recipeText.includes(kw))) score += 10
+        } else if (mood === 'festive') {
+          const festiveKeywords = ['halwa', 'sweet', 'poli', 'special', 'festive']
+          if (festiveKeywords.some(kw => recipeText.includes(kw))) score += 10
+        }
+      }
+      
+      return score
+    }
+    
+    // Score all recipes
+    const scoredRecipes = allRecipes.map(recipe => ({
+      ...recipe,
+      score: scoreRecipe(recipe)
+    })).filter(recipe => recipe.score > -50) // Filter out heavily penalized recipes
+    
+    // Sort by score (highest first)
+    scoredRecipes.sort((a, b) => b.score - a.score)
+    
+    // Better categorization with scoring
+    const categorizeRecipe = (recipe) => {
+      const title = recipe.title.toLowerCase()
+      const category = recipe.category
+      
+      // Mains: substantial dishes that can be the center of a meal
+      if (category === 'dinner' || category === 'snacks' || 
+          title.includes('sabzi') || title.includes('sambar') || 
+          title.includes('rasam') || title.includes('pulusu') ||
+          title.includes('bisi') || title.includes('aviyal')) {
+        return 'main'
+      }
+      
+      // Sides: accompaniments, chutneys, smaller dishes
+      if (category === 'breakfast' && 
+          (title.includes('chutney') || title.includes('chutney'))) {
+        return 'side'
+      }
+      
+      // Add-ons: quick items, snacks, extras
+      if (category === 'quick-foods' || 
+          (category === 'breakfast' && !title.includes('chutney')) ||
+          title.includes('rice') || title.includes('poha') || title.includes('upma')) {
+        return 'addon'
+      }
+      
+      // Sweets can be sides or add-ons
+      if (category === 'lunch' && 
+          (title.includes('halwa') || title.includes('sweet') || title.includes('poli'))) {
+        return 'side'
+      }
+      
+      // Default categorization
+      if (category === 'dinner' || category === 'snacks') return 'main'
+      if (category === 'breakfast') return 'side'
+      if (category === 'quick-foods') return 'addon'
+      return 'main'
+    }
+    
+    // Categorize and get top recipes
+    const mains = scoredRecipes.filter(r => categorizeRecipe(r) === 'main')
+    const sides = scoredRecipes.filter(r => categorizeRecipe(r) === 'side')
+    const addons = scoredRecipes.filter(r => categorizeRecipe(r) === 'addon')
+    
+    // Select best recipes (top scored) from each category
+    const getBestRecipe = (list, excludeIds = []) => {
+      const available = list.filter(r => !excludeIds.includes(r.id))
+      if (available.length === 0) return null
+      // Take from top 3 scored recipes for some variety
+      const topRecipes = available.slice(0, Math.min(3, available.length))
+      return topRecipes[Math.floor(Math.random() * topRecipes.length)]
+    }
+    
+    const mainRecipe = getBestRecipe(mains) || getBestRecipe(scoredRecipes)
+    const sideRecipe = getBestRecipe(sides, mainRecipe ? [mainRecipe.id] : []) || 
+                       getBestRecipe(scoredRecipes, mainRecipe ? [mainRecipe.id] : [])
+    const addonRecipe = getBestRecipe(addons, [mainRecipe?.id, sideRecipe?.id].filter(Boolean)) || 
+                        getBestRecipe(scoredRecipes, [mainRecipe?.id, sideRecipe?.id].filter(Boolean))
+    
+    setMealRecommendation({
+      main: mainRecipe?.title || 'No recommendation available',
+      side: sideRecipe?.title || 'No recommendation available',
+      addon: addonRecipe?.title || 'No recommendation available',
+      mainRecipe: mainRecipe,
+      sideRecipe: sideRecipe,
+      addonRecipe: addonRecipe
+    })
+  }
+
   const currentRecipes = selectedCategory ? recipes[selectedCategory] || [] : []
 
   return (
@@ -1775,7 +2045,7 @@ function App() {
         </div>
       )}
 
-      {(currentView === 'categories' || currentView === 'category' || currentView === 'recipe') && (
+      {(currentView === 'categories' || currentView === 'category' || currentView === 'recipe' || currentView === 'meal-recommender') && (
         <header className="header header-categories">
           {currentView === 'categories' && (
             <button className="header-back-button" onClick={handleBackToHome} title="Back to Home">
@@ -1798,6 +2068,13 @@ function App() {
               </svg>
             </button>
           )}
+          {currentView === 'meal-recommender' && (
+            <button className="header-back-button" onClick={handleBackToHome} title="Back to Home">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+            </button>
+          )}
           <div className="header-title-wrapper">
             <img 
               src="/images/chef_hat_logo.png" 
@@ -1806,10 +2083,19 @@ function App() {
             />
             <h1 className="header-title-categories">Sasi's recipe book</h1>
           </div>
+          <button 
+            className="header-what-to-cook-button"
+            onClick={() => {
+              setCurrentView('meal-recommender')
+              updateHistory('meal-recommender', null, null)
+            }}
+          >
+            What to cook?
+          </button>
         </header>
       )}
 
-      <main className={`main-content ${currentView === 'categories' || currentView === 'category' ? 'full-width' : ''}`}>
+      <main className={`main-content ${currentView === 'categories' || currentView === 'category' || currentView === 'meal-recommender' ? 'full-width' : ''}`}>
         {currentView === 'categories' && (
           <div className="categories-view">
             <div className="category-magazine-layout">
@@ -1946,22 +2232,44 @@ function App() {
                         </h1>
                         
                         {/* White Card below title */}
-                        <div className="sidebar-callout">
-                          <h3 className="callout-title">
-                            {selectedCategory === 'breakfast' ? 'What makes a chutney "authentically" South Indian?' :
-                             selectedCategory === 'lunch' ? 'What makes sweets special in South Indian culture?' :
-                             selectedCategory === 'dinner' ? 'What defines authentic South Indian sabzis?' :
-                             selectedCategory === 'quick-foods' ? 'What makes these quick recipes special?' :
-                             'What makes South Indian snacks unique?'}
-                          </h3>
-                          <p className="callout-text">
-                            {selectedCategory === 'breakfast' ? 'Freshly scraped coconut, roasted lentils, a tempering of mustard and curry leaves in gingelly oil, and the rhythm of hands on stone. Each family guards its own ratios, but the soul is always the same. These humble accompaniments transform simple meals into feasts, turning morning idlis and evening dosas into moments of pure comfort. Passed down through generations, each recipe carries the whispers of grandmothers and the warmth of home kitchens.' :
-                             selectedCategory === 'lunch' ? 'Jaggery instead of sugar, fresh coconut, ghee, and the patience of slow cooking. Each sweet carries the warmth of celebrations, the sweetness of traditions, and the love of generations. From the rich, fudgy texture of Mysore Pak to the delicate layers of Adhirasam, these confections mark every milestone. They are offerings at temples, gifts during festivals, and the quiet comfort of a rainy afternoon with a cup of filter coffee.' :
-                             selectedCategory === 'dinner' ? 'Fresh vegetables, mustard seeds popping in hot oil, curry leaves releasing their aroma, and the perfect balance of spices. Each dish respects the vegetable while creating layers of flavor. Whether it\'s a dry stir-fry that celebrates the crunch of beans or a rich, comforting gravy that wraps around rice, these sabzis are the heart of every South Indian meal. Cooked with care and served with love, they bring families together around the table.' :
-                             selectedCategory === 'quick-foods' ? 'Simple ingredients, minimal prep time, and maximum flavor. These recipes are perfect for busy mornings, quick lunches, or when you need something delicious in a hurry. From tangy lemon rice to fluffy upma, each dish comes together in 15 minutes or less without compromising on taste. They prove that great food doesn\'t always need hours of cooking - sometimes, the best meals are the ones that come together quickly and bring instant satisfaction.' :
-                             'Crispy textures, bold spices, and the perfect balance of flavors. Made with rice flour, lentils, and traditional techniques that create that signature crunch and taste. From the morning vada that pairs perfectly with sambar to the evening mixture that makes tea time special, these snacks are more than just food. They are memories of childhood, the sound of festivals, and the simple joy of sharing a plate with loved ones.'}
-                          </p>
-                        </div>
+                        {selectedCategory === 'quick-foods' ? (
+                          <div className="quick-foods-benefits-callout">
+                            <h3 className="callout-title">Why Cook at Home in 15 Minutes?</h3>
+                            <div className="quick-foods-benefits-grid">
+                              <div className="quick-foods-benefit-item-callout" style={{backgroundImage: "url('/images/chutneys_category_image.png')"}}>
+                                <div className="benefit-overlay"></div>
+                                <strong className="benefit-title-overlay">Fresh & Nutritious</strong>
+                              </div>
+                              <div className="quick-foods-benefit-item-callout" style={{backgroundImage: "url('/images/sweets_category_image.png')"}}>
+                                <div className="benefit-overlay"></div>
+                                <strong className="benefit-title-overlay">Save Money</strong>
+                              </div>
+                              <div className="quick-foods-benefit-item-callout" style={{backgroundImage: "url('/images/sabzi_image.png')"}}>
+                                <div className="benefit-overlay"></div>
+                                <strong className="benefit-title-overlay">Faster Than Delivery</strong>
+                              </div>
+                              <div className="quick-foods-benefit-item-callout" style={{backgroundImage: "url('/images/main_gravies_category_image.png')"}}>
+                                <div className="benefit-overlay"></div>
+                                <strong className="benefit-title-overlay">Made with Love</strong>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="sidebar-callout">
+                            <h3 className="callout-title">
+                              {selectedCategory === 'breakfast' ? 'What makes a chutney "authentically" South Indian?' :
+                               selectedCategory === 'lunch' ? 'What makes sweets special in South Indian culture?' :
+                               selectedCategory === 'dinner' ? 'What defines authentic South Indian sabzis?' :
+                               'What makes South Indian snacks unique?'}
+                            </h3>
+                            <p className="callout-text">
+                              {selectedCategory === 'breakfast' ? 'Freshly scraped coconut, roasted lentils, a tempering of mustard and curry leaves in gingelly oil, and the rhythm of hands on stone. Each family guards its own ratios, but the soul is always the same. These humble accompaniments transform simple meals into feasts, turning morning idlis and evening dosas into moments of pure comfort. Passed down through generations, each recipe carries the whispers of grandmothers and the warmth of home kitchens.' :
+                               selectedCategory === 'lunch' ? 'Jaggery instead of sugar, fresh coconut, ghee, and the patience of slow cooking. Each sweet carries the warmth of celebrations, the sweetness of traditions, and the love of generations. From the rich, fudgy texture of Mysore Pak to the delicate layers of Adhirasam, these confections mark every milestone. They are offerings at temples, gifts during festivals, and the quiet comfort of a rainy afternoon with a cup of filter coffee.' :
+                               selectedCategory === 'dinner' ? 'Fresh vegetables, mustard seeds popping in hot oil, curry leaves releasing their aroma, and the perfect balance of spices. Each dish respects the vegetable while creating layers of flavor. Whether it\'s a dry stir-fry that celebrates the crunch of beans or a rich, comforting gravy that wraps around rice, these sabzis are the heart of every South Indian meal. Cooked with care and served with love, they bring families together around the table.' :
+                               'Crispy textures, bold spices, and the perfect balance of flavors. Made with rice flour, lentils, and traditional techniques that create that signature crunch and taste. From the morning vada that pairs perfectly with sambar to the evening mixture that makes tea time special, these snacks are more than just food. They are memories of childhood, the sound of festivals, and the simple joy of sharing a plate with loved ones.'}
+                            </p>
+                          </div>
+                        )}
                         
                         {/* Modern CTA Button */}
                         <button 
@@ -2118,6 +2426,187 @@ function App() {
 
         {currentView === 'recipe' && selectedRecipe && (
           <RecipeDetail recipe={selectedRecipe} recipes={recipes} handleRecipeClick={handleRecipeClick} handleViewAllRecipes={handleViewAllRecipes} />
+        )}
+
+        {currentView === 'meal-recommender' && (
+          <div className="meal-recommender-view">
+            <div className="meal-recommender-split-layout">
+              {/* Left Section */}
+              <div className="meal-recommender-left-section">
+                {/* Hero Section with Dark Brown Background */}
+                <div className="meal-recommender-hero">
+                  <div className="meal-recommender-hero-content">
+                    <p className="meal-recommender-est">~ Est. Since Grandmother's Kitchen ~</p>
+                    <h1 className="meal-recommender-hero-title">Discover the Timeless Flavors of South India</h1>
+                    <p className="meal-recommender-hero-description">
+                      From the crispy dosas of Tamil Nadu to the aromatic biryanis of Hyderabad, from the tangy rasam of Karnataka to the coconut-laden curries of Kerala — embark on a culinary journey through centuries of tradition.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Editor's Note Section */}
+                <div className="meal-recommender-editors-note">
+                  <div className="editors-note-label">
+                    <span className="editors-note-line"></span>
+                    <span className="editors-note-text">EDITOR'S NOTE</span>
+                    <span className="editors-note-line"></span>
+                  </div>
+                  <h2 className="editors-note-title">What Should I Cook Today?</h2>
+                  <p className="editors-note-subtitle">The Question That Haunts Every Kitchen</p>
+                </div>
+
+                {/* Problem Statement Section */}
+                <div className="meal-recommender-problem-section">
+                  <div className="problem-text-block">
+                    <p className="problem-text-italic">
+                      Young professionals don't lack recipes. They lack mental bandwidth. After a long day of decisions, the last thing you need is another choice to make.
+                    </p>
+                    <p className="problem-text">
+                      We understand the exhaustion of standing before your pantry, wondering what to prepare. That's why we've created something special — an intelligent companion that considers your time, your dietary needs, your ingredients, and even your mood to suggest the perfect South Indian meal.
+                    </p>
+                  </div>
+                </div>
+
+                {/* CTA Section with Dark Brown Background */}
+                <div className="meal-recommender-cta-section">
+                  <div className="meal-recommender-cta-content">
+                    <div className="cta-icon-wrapper">
+                      <svg className="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 13h12M6 13c0 2.5 2 4.5 4.5 4.5h3c2.5 0 4.5-2 4.5-4.5M6 13V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5"/>
+                        <path d="M9 21h6M12 17v4"/>
+                      </svg>
+                    </div>
+                    <h2 className="cta-main-title">Let Us Decide For You</h2>
+                    <p className="cta-subtitle">Our Smart Meal Recommender</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Section - Form */}
+              <div className="meal-recommender-right-section">
+                <div className="meal-recommender-form-section">
+                  <div className="form-section-header">
+                    <div className="form-decorative-line">
+                      <span className="form-decorative-dot"></span>
+                    </div>
+                    <h3 className="form-section-title">Smart Meal Recommender</h3>
+                    <p className="form-section-subtitle">Answer a few questions and let us craft your perfect meal</p>
+                  </div>
+                  
+                  <div className="meal-recommender-form-magazine">
+                      <div className="recommender-form-group">
+                        <label>Time Available</label>
+                        <select 
+                          value={recommenderForm.time} 
+                          onChange={(e) => setRecommenderForm({...recommenderForm, time: e.target.value})}
+                        >
+                          <option value="">Select time</option>
+                          <option value="15">15 minutes</option>
+                          <option value="30">30 minutes</option>
+                          <option value="sunday">Sunday special</option>
+                        </select>
+                      </div>
+                      
+                      <div className="recommender-form-group">
+                        <label>Diet Preference</label>
+                        <select 
+                          value={recommenderForm.diet} 
+                          onChange={(e) => setRecommenderForm({...recommenderForm, diet: e.target.value})}
+                        >
+                          <option value="">Select diet</option>
+                          <option value="veg">Vegetarian</option>
+                          <option value="egg">Egg-friendly</option>
+                          <option value="high-protein">High Protein</option>
+                          <option value="pcos">PCOS Friendly</option>
+                        </select>
+                      </div>
+                      
+                      <div className="recommender-form-group">
+                        <label>Ingredients You Have (comma separated)</label>
+                        <input 
+                          type="text" 
+                          placeholder="e.g., tomatoes, coconut, dal, eggs, cauliflower, onions"
+                          value={recommenderForm.ingredients} 
+                          onChange={(e) => setRecommenderForm({...recommenderForm, ingredients: e.target.value})}
+                        />
+                      </div>
+                      
+                      <div className="recommender-form-group">
+                        <label>Spice Tolerance</label>
+                        <select 
+                          value={recommenderForm.spiceTolerance} 
+                          onChange={(e) => setRecommenderForm({...recommenderForm, spiceTolerance: e.target.value})}
+                        >
+                          <option value="">Select tolerance</option>
+                          <option value="mild">Mild</option>
+                          <option value="medium">Medium</option>
+                          <option value="hot">Hot</option>
+                        </select>
+                      </div>
+                      
+                      <div className="recommender-form-group">
+                        <label>Mood</label>
+                        <select 
+                          value={recommenderForm.mood} 
+                          onChange={(e) => setRecommenderForm({...recommenderForm, mood: e.target.value})}
+                        >
+                          <option value="">Select mood</option>
+                          <option value="comfort">Comfort Food</option>
+                          <option value="light">Light & Fresh</option>
+                          <option value="festive">Festive & Special</option>
+                        </select>
+                      </div>
+                      
+                      <button 
+                        className="generate-recommendation-button-magazine"
+                        onClick={() => generateMealRecommendation()}
+                      >
+                        What Should I Cook Today?
+                      </button>
+                      
+                      {mealRecommendation && (
+                        <div className="meal-recommendation-results-magazine">
+                          <h4 className="results-title-magazine">Your Perfect Meal Plan</h4>
+                          {mealRecommendation.mainRecipe && (
+                            <div 
+                              className="recommendation-item-magazine clickable"
+                              onClick={() => {
+                                handleRecipeClick(mealRecommendation.mainRecipe)
+                              }}
+                            >
+                              <span className="recommendation-label-magazine">Main:</span>
+                              <span className="recommendation-recipe-magazine">{mealRecommendation.main}</span>
+                            </div>
+                          )}
+                          {mealRecommendation.sideRecipe && (
+                            <div 
+                              className="recommendation-item-magazine clickable"
+                              onClick={() => {
+                                handleRecipeClick(mealRecommendation.sideRecipe)
+                              }}
+                            >
+                              <span className="recommendation-label-magazine">Side:</span>
+                              <span className="recommendation-recipe-magazine">{mealRecommendation.side}</span>
+                            </div>
+                          )}
+                          {mealRecommendation.addonRecipe && (
+                            <div 
+                              className="recommendation-item-magazine clickable"
+                              onClick={() => {
+                                handleRecipeClick(mealRecommendation.addonRecipe)
+                              }}
+                            >
+                              <span className="recommendation-label-magazine">Quick Add-on:</span>
+                              <span className="recommendation-recipe-magazine">{mealRecommendation.addon}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
         )}
       </main>
 
