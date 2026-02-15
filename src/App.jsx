@@ -2021,9 +2021,17 @@ function App() {
                 <span>Savor Every Bite</span>
                 <span>with Sasi's</span>
                 <span>Recipes</span>
+                <span className="main-title-subtitle">Authentic South Indian Flavors</span>
               </h1>
+              <div className="title-divider"></div>
+              <div className="social-proof-badge">
+                <span className="badge-icon">✨</span>
+                <span className="badge-text">100+ Trusted Recipes</span>
+              </div>
               <p className="home-description">
+                <span className="quote-mark-start">"</span>
                 These recipes are easy to follow, beginner friendly, and made with simple ingredients you already know. Whether you are learning to cook or just want reliable home food, you will find dishes that actually work and taste like home.
+                <span className="quote-mark-end">"</span>
               </p>
               <div className="home-cta-buttons">
                 <button className="get-cooking-button" onClick={handleGetCooking}>
