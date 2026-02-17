@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
 function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes }) {
@@ -476,7 +476,6 @@ function RecipeDetail({ recipe, recipes, handleRecipeClick, handleViewAllRecipes
               ))}
             </div>
           )}
-
           {activeTab === 'instructions' && (
             <div className="recipe-tab-panel">
               {instructionGroups.map((group, groupIndex) => (
@@ -1671,6 +1670,21 @@ function App() {
     mood: ''
   })
   const [mealRecommendation, setMealRecommendation] = useState(null)
+  const recommendationRef = useRef(null)
+
+  // Auto-scroll to recommendations when they populate
+  useEffect(() => {
+    if (mealRecommendation && mealRecommendation.recipes && mealRecommendation.recipes.length > 0) {
+      setTimeout(() => {
+        if (recommendationRef.current) {
+          recommendationRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          })
+        }
+      }, 300) // Small delay to ensure DOM is updated
+    }
+  }, [mealRecommendation])
 
   // Initialize browser history
   useEffect(() => {
@@ -1720,6 +1734,10 @@ function App() {
     setSelectedCategory(categoryId)
     setCurrentView('category')
     updateHistory('category', categoryId, null)
+    // Scroll to top after state update, especially important for mobile
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    }, 0)
   }
 
   const handleGetCooking = () => {
@@ -1974,33 +1992,28 @@ function App() {
       return 'main'
     }
     
-    // Categorize and get top recipes
-    const mains = scoredRecipes.filter(r => categorizeRecipe(r) === 'main')
-    const sides = scoredRecipes.filter(r => categorizeRecipe(r) === 'side')
-    const addons = scoredRecipes.filter(r => categorizeRecipe(r) === 'addon')
-    
-    // Select best recipes (top scored) from each category
-    const getBestRecipe = (list, excludeIds = []) => {
-      const available = list.filter(r => !excludeIds.includes(r.id))
-      if (available.length === 0) return null
-      // Take from top 3 scored recipes for some variety
-      const topRecipes = available.slice(0, Math.min(3, available.length))
-      return topRecipes[Math.floor(Math.random() * topRecipes.length)]
+    // Get top scored recipes (no categorization - just individual recipes)
+    const getTopRecipes = (count = 5) => {
+      // Remove duplicates and get top scored recipes
+      const uniqueRecipes = []
+      const seenIds = new Set()
+      
+      for (const recipe of scoredRecipes) {
+        if (!seenIds.has(recipe.id)) {
+          uniqueRecipes.push(recipe)
+          seenIds.add(recipe.id)
+        }
+        if (uniqueRecipes.length >= count) break
+      }
+      
+      return uniqueRecipes
     }
     
-    const mainRecipe = getBestRecipe(mains) || getBestRecipe(scoredRecipes)
-    const sideRecipe = getBestRecipe(sides, mainRecipe ? [mainRecipe.id] : []) || 
-                       getBestRecipe(scoredRecipes, mainRecipe ? [mainRecipe.id] : [])
-    const addonRecipe = getBestRecipe(addons, [mainRecipe?.id, sideRecipe?.id].filter(Boolean)) || 
-                        getBestRecipe(scoredRecipes, [mainRecipe?.id, sideRecipe?.id].filter(Boolean))
+    // Get 4-5 top individual recipes
+    const recommendedRecipes = getTopRecipes(5)
     
     setMealRecommendation({
-      main: mainRecipe?.title || 'No recommendation available',
-      side: sideRecipe?.title || 'No recommendation available',
-      addon: addonRecipe?.title || 'No recommendation available',
-      mainRecipe: mainRecipe,
-      sideRecipe: sideRecipe,
-      addonRecipe: addonRecipe
+      recipes: recommendedRecipes
     })
   }
 
@@ -2600,6 +2613,7 @@ function App() {
                         <select 
                           value={recommenderForm.time} 
                           onChange={(e) => setRecommenderForm({...recommenderForm, time: e.target.value})}
+                          className={recommenderForm.time ? 'has-value' : ''}
                         >
                           <option value="">Select time</option>
                           <option value="15">15 minutes</option>
@@ -2613,6 +2627,7 @@ function App() {
                         <select 
                           value={recommenderForm.diet} 
                           onChange={(e) => setRecommenderForm({...recommenderForm, diet: e.target.value})}
+                          className={recommenderForm.diet ? 'has-value' : ''}
                         >
                           <option value="">Select diet</option>
                           <option value="veg">Vegetarian</option>
@@ -2637,6 +2652,7 @@ function App() {
                         <select 
                           value={recommenderForm.spiceTolerance} 
                           onChange={(e) => setRecommenderForm({...recommenderForm, spiceTolerance: e.target.value})}
+                          className={recommenderForm.spiceTolerance ? 'has-value' : ''}
                         >
                           <option value="">Select tolerance</option>
                           <option value="mild">Mild</option>
@@ -2650,6 +2666,7 @@ function App() {
                         <select 
                           value={recommenderForm.mood} 
                           onChange={(e) => setRecommenderForm({...recommenderForm, mood: e.target.value})}
+                          className={recommenderForm.mood ? 'has-value' : ''}
                         >
                           <option value="">Select mood</option>
                           <option value="comfort">Comfort Food</option>
@@ -2665,42 +2682,20 @@ function App() {
                         What Should I Cook Today?
                       </button>
                       
-                      {mealRecommendation && (
-                        <div className="meal-recommendation-results-magazine">
-                          <h4 className="results-title-magazine">Your Perfect Meal Plan</h4>
-                          {mealRecommendation.mainRecipe && (
+                      {mealRecommendation && mealRecommendation.recipes && mealRecommendation.recipes.length > 0 && (
+                        <div ref={recommendationRef} className="meal-recommendation-results-magazine">
+                          <h4 className="results-title-magazine">Recommended Recipes</h4>
+                          {mealRecommendation.recipes.map((recipe, index) => (
                             <div 
+                              key={recipe.id || index}
                               className="recommendation-item-magazine clickable"
                               onClick={() => {
-                                handleRecipeClick(mealRecommendation.mainRecipe)
+                                handleRecipeClick(recipe)
                               }}
                             >
-                              <span className="recommendation-label-magazine">Main:</span>
-                              <span className="recommendation-recipe-magazine">{mealRecommendation.main}</span>
+                              <span className="recommendation-recipe-magazine">{recipe.title}</span>
                             </div>
-                          )}
-                          {mealRecommendation.sideRecipe && (
-                            <div 
-                              className="recommendation-item-magazine clickable"
-                              onClick={() => {
-                                handleRecipeClick(mealRecommendation.sideRecipe)
-                              }}
-                            >
-                              <span className="recommendation-label-magazine">Side:</span>
-                              <span className="recommendation-recipe-magazine">{mealRecommendation.side}</span>
-                            </div>
-                          )}
-                          {mealRecommendation.addonRecipe && (
-                            <div 
-                              className="recommendation-item-magazine clickable"
-                              onClick={() => {
-                                handleRecipeClick(mealRecommendation.addonRecipe)
-                              }}
-                            >
-                              <span className="recommendation-label-magazine">Quick Add-on:</span>
-                              <span className="recommendation-recipe-magazine">{mealRecommendation.addon}</span>
-                            </div>
-                          )}
+                          ))}
                         </div>
                       )}
                     </div>
