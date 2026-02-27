@@ -516,9 +516,9 @@
   background: linear-gradient(135deg, rgba(73, 34, 1, 0.3) 0%, rgba(107, 58, 21, 0.4) 100%);
   color: #fff0db;
   border: 2px solid rgba(255, 240, 219, 0.3);
-  padding: 1.25rem 2.5rem;
+  padding: 1.5rem 3rem;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   font-weight: 600;
   font-family: 'Inter', 'Lato', sans-serif;
   cursor: pointer;
@@ -544,6 +544,19 @@
     0 6px 24px rgba(0, 0, 0, 0.25),
     0 4px 12px rgba(0, 0, 0, 0.15);
   border-color: rgba(255, 240, 219, 0.5);
+}
+
+/* Reduce CTA button sizes on web view only */
+@media (min-width: 769px) {
+  .get-cooking-button {
+    padding: 1.25rem 2.5rem;
+    font-size: calc(1rem - 4px);
+  }
+
+  .what-to-cook-home-button {
+    padding: 1.25rem 2.5rem;
+    font-size: calc(1.25rem - 4px);
+  }
 }
 
 .what-to-cook-icon {
@@ -4868,9 +4881,10 @@
 
   .home-left {
     padding: 2rem 1.5rem;
-    min-height: 50vh;
+    min-height: auto;
     flex: 1 1 auto;
     max-width: 100%;
+    
   }
 
   .main-title {
@@ -4882,7 +4896,7 @@
   }
 
   .home-right {
-    min-height: 50vh;
+    min-height: auto;
     flex: 1 1 auto;
     max-width: 100%;
     padding: 1.5rem;
@@ -5092,7 +5106,7 @@
 /* Two Column Layout: Ingredients (Left) and Instructions (Right) */
 .recipe-tab-container {
   max-width: 900px;
-  margin: 3rem auto;
+  margin: 4rem auto;
   padding: 0 2rem;
   background: transparent;
 }
@@ -5100,10 +5114,11 @@
 .recipe-tab-buttons {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
   border-bottom: 2px solid rgba(139, 115, 85, 0.2);
   padding-bottom: 0;
+  position: relative;
 }
 
 .recipe-tab-button {
@@ -5115,7 +5130,7 @@
   border: none;
   border-bottom: 4px solid transparent;
   color: #6B3A15;
-  font-size: 1.1rem;
+  font-size: calc(1.1rem + 4px);
   font-weight: 600;
   font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
   cursor: pointer;
@@ -5137,6 +5152,27 @@
   border-bottom-color: #8B7355;
   background: transparent;
   border-bottom-width: 5px;
+  position: relative;
+}
+
+.recipe-tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, #8B7355, transparent);
+  animation: underlineGrow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes underlineGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .recipe-tab-button:focus {
@@ -5145,8 +5181,8 @@
 }
 
 .tab-icon {
-  width: 24px;
-  height: 24px;
+  width: calc(24px + 12px);
+  height: calc(24px + 12px);
   object-fit: contain;
   transition: transform 0.3s ease;
 }
@@ -5180,6 +5216,11 @@
 .recipe-tab-panel {
   width: 100%;
   animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 0.5rem;
+}
+
+.recipe-tab-panel {
+  background: transparent;
 }
 
 .recipe-tab-panel .ingredient-group {
@@ -5233,7 +5274,7 @@
   padding: 1rem 0 1rem 1rem;
   color: #492201;
   font-family: 'Inter', 'Lato', sans-serif;
-  font-size: 1.05rem;
+  font-size: calc(1.05rem + 8px);
   line-height: 1.7;
   position: relative;
   border-bottom: 1px dotted rgba(139, 115, 85, 0.2);
@@ -5273,10 +5314,34 @@
   flex: 1;
 }
 
+/* Reduce ingredient and instruction font sizes by 4px on web view only */
+@media (min-width: 769px) {
+  .recipe-tab-panel .ingredient-group-title {
+    font-size: calc(1.15rem - 4px);
+  }
+
+  .recipe-tab-panel .ingredients-list-new li {
+    font-size: calc(1.05rem + 4px);
+  }
+
+  .recipe-tab-panel .instruction-group-title {
+    font-size: calc(1.15rem - 4px);
+  }
+
+  .recipe-tab-panel .instruction-text {
+    font-size: calc(1.05rem + 4px);
+  }
+
+  .recipe-tab-panel .instruction-text:first-child {
+    font-size: calc(1.05rem + 8px);
+  }
+}
+
 .recipe-tab-panel .instruction-group {
   margin-bottom: 2.5rem;
   position: relative;
   padding-bottom: 2rem;
+  text-align: left;
 }
 
 .recipe-tab-panel .instruction-group:not(:last-child)::after {
@@ -5295,68 +5360,74 @@
 }
 
 .recipe-tab-panel .instruction-group-title {
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 600;
   color: #492201;
-  margin-bottom: 1.5rem;
-  font-family: 'Playfair Display', 'Libre Baskerville', 'Georgia', serif;
-  letter-spacing: 0.3px;
+  margin-bottom: 1.25rem;
+  font-family: 'Inter', 'Lato', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   position: relative;
-  padding-left: 2rem;
+  padding-left: 1.5rem;
+  text-align: left;
 }
 
 .recipe-tab-panel .instruction-group-title::before {
-  content: '▸';
+  content: '●';
   position: absolute;
   left: 0;
-  color: rgba(139, 115, 85, 0.5);
-  font-size: 1.2rem;
+  color: rgba(139, 115, 85, 0.4);
+  font-size: 0.8rem;
 }
 
 .recipe-tab-panel .instructions-paragraph {
   display: flex;
   flex-direction: column;
   counter-reset: step-counter;
-  gap: 1.25rem;
+  gap: 0;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .recipe-tab-panel .instruction-text {
-  padding: 1.5rem 1.75rem 1.5rem 3.5rem;
+  padding: 1rem 0 1rem 1rem;
   margin: 0;
   position: relative;
-  color: #4A4A4A;
+  color: #492201;
   font-family: 'Inter', 'Lato', sans-serif;
-  font-size: 1.05rem;
-  line-height: 1.75;
+  font-size: calc(1.05rem + 8px);
+  line-height: 1.7;
   font-weight: 400;
   text-align: left;
-  background: rgba(255, 240, 219, 0.35);
-  border-radius: 10px;
-  border-left: 4px solid rgba(139, 115, 85, 0.4);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 650px;
-  width: 100%;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px dotted rgba(139, 115, 85, 0.2);
   counter-increment: step-counter;
   animation: slideInInstruction 0.4s ease-out both;
 }
 
-.recipe-tab-panel .instruction-text::before {
-  content: counter(step-counter);
-  position: absolute;
-  left: 1rem;
-  top: 1.5rem;
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, #8B7355, #6B4E3D);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.recipe-tab-panel .instruction-text:first-child {
+  font-size: calc(1.05rem + 12px);
   font-weight: 700;
-  font-size: 0.85rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-tab-panel .instruction-text::before,
+.recipe-tab-panel .instruction-text::after {
+  display: none;
+}
+
+.recipe-tab-panel .instruction-text:last-child {
+  border-bottom: none;
 }
 
 .recipe-tab-panel .instruction-text:nth-child(1) { animation-delay: 0.1s; }
@@ -5369,13 +5440,6 @@
 .recipe-tab-panel .instruction-text:nth-child(8) { animation-delay: 0.45s; }
 .recipe-tab-panel .instruction-text:nth-child(9) { animation-delay: 0.5s; }
 .recipe-tab-panel .instruction-text:nth-child(10) { animation-delay: 0.55s; }
-
-.recipe-tab-panel .instruction-text:hover {
-  background: rgba(255, 240, 219, 0.55);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  transform: translateX(4px);
-  border-left-color: rgba(139, 115, 85, 0.6);
-}
 
 .recipe-tab-panel .instruction-text:focus {
   outline: 2px solid rgba(139, 115, 85, 0.4);
@@ -5677,27 +5741,22 @@
 }
 
 .instruction-text {
-  padding: 1.25rem 1.5rem 1.25rem 1rem;
+  padding: 1.25rem 0 1.25rem 1rem;
   margin: 0 0 1rem 0;
   position: relative;
-  color: #4A4A4A;
+  color: #492201;
   font-family: 'Inter', 'Lato', sans-serif;
   font-size: 1rem;
   line-height: 1.7;
   font-weight: 400;
   text-align: left;
-  background: rgba(255, 240, 219, 0.3);
-  border-radius: 8px;
-  border-left: 3px solid rgba(139, 115, 85, 0.3);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
   transition: all 0.2s ease;
 }
 
-.instruction-text:hover {
-  background: rgba(255, 240, 219, 0.5);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transform: translateX(2px);
-}
 
 .instruction-text::before {
   content: '';
@@ -6210,6 +6269,7 @@
   /* Homepage Mobile */
   .home-left {
     padding: 1rem 1rem 0.5rem 1rem;
+    min-height: auto;
   }
 
   .front-page-icon {
@@ -6218,7 +6278,7 @@
   }
 
   .main-title {
-    font-size: calc(2rem + 4px);
+    font-size: calc(2rem + 12px);
     margin-bottom: 0.75rem;
     line-height: 1.1;
   }
@@ -6293,8 +6353,8 @@
   }
 
   .what-to-cook-home-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.75rem;
+    padding: 1rem 1.75rem;
+    font-size: 0.85rem;
     border-radius: 8px;
     box-shadow: 
       0 2px 8px rgba(73, 34, 1, 0.2),
@@ -6307,10 +6367,7 @@
   }
 
   .what-to-cook-home-button::before {
-    content: '🍳';
-    margin-right: 0.5rem;
-    font-size: 0.9rem;
-    opacity: 0.9;
+    display: none;
   }
 
   .what-to-cook-home-button:hover {
@@ -6605,14 +6662,14 @@
     margin-right: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     width: 100%;
     padding: 0 16px;
   }
 
   .recipe-tab-buttons {
     width: 100%;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 0.5rem;
   }
 
@@ -6621,15 +6678,16 @@
     font-size: 1rem;
     min-height: 48px;
     touch-action: manipulation;
+    flex: 0 0 auto;
   }
 
   .recipe-tab-content {
     position: relative;
     width: 100%;
-    padding: 1rem 0 0 0;
+    padding: 0.5rem 0 0 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     background: transparent;
     border-radius: 0;
     box-shadow: none;
@@ -6640,96 +6698,177 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .recipe-tab-panel .ingredient-group-title {
-    padding-left: 1.25rem;
-    font-size: 1rem;
-  }
-
-  .recipe-tab-panel .ingredient-group-title::before {
-    font-size: 0.7rem;
-  }
-
-  .recipe-tab-panel .ingredients-list-new li {
-    padding: 0.875rem 0;
-    font-size: 0.95rem;
-    display: grid;
-    grid-template-columns: auto 1fr;
     align-items: center;
-    text-align: left;
-  }
-
-  .recipe-tab-panel .ingredient-quantity,
-  .recipe-tab-panel .ingredient-name {
-    text-align: left;
-  }
-
-  .recipe-tab-panel .instruction-group-title {
-    padding-left: 1.5rem;
-    font-size: 1.1rem;
-  }
-
-  .recipe-tab-panel .instruction-group-title::before {
-    font-size: 1rem;
-  }
-
-  .recipe-tab-panel .instruction-text {
-    padding: 1.25rem 1.5rem 1.25rem 3rem;
-    font-size: 0.95rem;
-  }
-
-  .recipe-tab-panel .instruction-text::before {
-    width: 24px;
-    height: 24px;
-    font-size: 0.75rem;
-    left: 0.75rem;
-    top: 1.25rem;
   }
 
   .recipe-tab-panel .ingredient-group {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .recipe-tab-panel .ingredient-group-title {
-    text-align: center;
+    padding-left: 0;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .recipe-tab-panel .ingredient-group-title::before {
+    display: none;
   }
 
   .recipe-tab-panel .ingredients-list-new {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .recipe-tab-panel .ingredients-list-new li {
-    text-align: center;
+    padding: 0.875rem 0 !important;
+    padding-left: 0 !important;
+    font-size: 0.95rem;
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start !important;
+    text-align: left !important;
     width: 100%;
-    justify-content: center;
+    border-left: none !important;
+  }
+
+  .recipe-tab-panel .ingredient-quantity {
+    text-align: left !important;
+    margin-right: 0.5rem;
+    flex: 0 0 auto;
+  }
+
+  .recipe-tab-panel .ingredient-name {
+    text-align: left !important;
+    flex: 0 0 auto;
   }
 
   .recipe-tab-panel .instruction-group {
+    margin-bottom: 3rem;
+    padding-bottom: 2.5rem;
+    padding-top: 1.25rem;
+  }
+
+  .recipe-tab-panel .instruction-group::before {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+
+  .recipe-tab-panel .instruction-group-title {
+    padding-left: 0;
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    margin-top: 0.25rem;
+  }
+
+  .recipe-tab-panel .instructions-paragraph {
+    padding-left: 2.75rem;
+    gap: 1.75rem;
+  }
+
+  .recipe-tab-panel .instructions-paragraph::before {
+    left: 1rem;
+  }
+
+  .recipe-tab-panel .instruction-text {
+    padding: 1.75rem 0 1.75rem 2.5rem;
+    font-size: 1.05rem;
+    line-height: 1.9;
+  }
+
+  .recipe-tab-panel .instruction-text::after {
+    font-size: 3.5rem;
+    left: -0.25rem;
+  }
+
+  .recipe-tab-panel .instruction-text::before {
+    width: 26px;
+    height: 26px;
+    font-size: 0.75rem;
+    left: -2rem;
+    top: 1.75rem;
+  }
+
+  .recipe-tab-panel .instruction-text:first-child {
+    font-size: calc(1.05rem + 4px);
+    font-weight: 700;
+  }
+  
+  .recipe-tab-panel .instruction-text:first-child::first-letter {
+    font-size: inherit;
+    padding-right: 0;
+    float: none;
+  }
+
+  .recipe-tab-panel .ingredient-group {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .recipe-tab-panel .ingredient-group-title {
+    text-align: left;
+  }
+
+  .recipe-tab-panel .ingredients-list-new {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .recipe-tab-panel .ingredients-list-new li {
+    text-align: left;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .recipe-tab-panel .instruction-group {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    text-align: center !important;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
   .recipe-tab-panel .instruction-group-title {
+    padding-left: 0;
+    font-size: 1rem;
     text-align: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .recipe-tab-panel .instruction-group-title::before {
+    display: none;
   }
 
   .recipe-tab-panel .instructions-paragraph {
-    align-items: center;
+    align-items: center !important;
+    padding-left: 0 !important;
+    text-align: center !important;
+    gap: 0;
   }
 
   .recipe-tab-panel .instruction-text {
-    text-align: center;
-    margin: 0 auto 1rem auto;
+    padding: 0.5rem 0 !important;
+    padding-left: 0 !important;
+    font-size: 0.95rem;
+    text-align: center !important;
+    margin: 0;
+    border-left: none !important;
+  }
+
+  .do-recipe-now-button {
+    padding: 0.75rem 1.75rem;
+    font-size: 0.95rem;
   }
 
   .recipe-detail-content-layout {
@@ -6764,9 +6903,75 @@
     padding: 1.5rem;
   }
 
+  .complete-meal-section-inner {
+    padding: 0 12px;
+  }
+
   .complete-meal-cards {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .complete-meal-card {
+    width: 100%;
+  }
+
+  .complete-meal-card-content {
+    padding: 1.25rem;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .complete-meal-card-title {
+    font-size: calc(1.15rem - 2px);
+    text-align: left;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+  }
+
+  .complete-meal-card-meta {
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+    gap: 0.75rem;
+  }
+
+  .complete-meal-card-time {
+    font-size: 0.85rem;
+    color: #492201;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .complete-meal-card-time .time-icon {
+    display: none;
+  }
+
+  .complete-meal-card-difficulty {
+    font-size: 0.75rem;
+    color: #492201;
+    background: rgba(73, 34, 1, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'Inter', 'Lato', sans-serif;
+  }
+
+  .complete-meal-card-difficulty.difficulty-easy,
+  .complete-meal-card-difficulty.difficulty-medium,
+  .complete-meal-card-difficulty.difficulty-hard {
+    background: rgba(73, 34, 1, 0.1);
+    color: #492201;
+  }
+
+  .complete-meal-card-arrow {
+    display: none;
   }
 
   .complete-meal-header {
@@ -6774,6 +6979,20 @@
     align-items: center;
     text-align: center;
     gap: 1rem;
+  }
+
+  .complete-meal-title {
+    font-size: calc(2.5rem - 8px);
+  }
+
+  .complete-meal-subtitle {
+    font-size: calc(1rem - 4px);
+  }
+
+  .view-all-recipes-button {
+    padding: 0.7rem 1.3rem;
+    font-size: 0.88rem;
+    min-height: 42px;
   }
 
   /* Meal Recommender Mobile */
@@ -6886,8 +7105,8 @@
   }
 
   .what-to-cook-home-button {
-    padding: 0.7rem 1.4rem;
-    font-size: 0.7rem;
+    padding: 1rem 1.5rem;
+    font-size: 0.8rem;
     border-radius: 8px;
     box-shadow: 
       0 2px 8px rgba(73, 34, 1, 0.2),
@@ -6900,10 +7119,7 @@
   }
 
   .what-to-cook-home-button::before {
-    content: '🍳';
-    margin-right: 0.4rem;
-    font-size: 0.85rem;
-    opacity: 0.9;
+    display: none;
   }
 
   .what-to-cook-home-button:hover {
@@ -7053,7 +7269,7 @@
   }
 
   .main-title {
-    font-size: 2rem;
+    font-size: calc(2rem + 8px);
     line-height: 1.1;
     margin-bottom: 0.75rem;
   }
@@ -7132,9 +7348,9 @@
   }
 
   .what-to-cook-home-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.75rem;
-    min-height: 38px;
+    padding: 1rem 1.75rem;
+    font-size: 0.85rem;
+    min-height: 44px;
     border-radius: 8px;
     box-shadow: 
       0 2px 8px rgba(73, 34, 1, 0.2),
@@ -7147,10 +7363,7 @@
   }
 
   .what-to-cook-home-button::before {
-    content: '🍳';
-    margin-right: 0.5rem;
-    font-size: 0.9rem;
-    opacity: 0.9;
+    display: none;
   }
 
   .what-to-cook-home-button:hover {
@@ -7440,8 +7653,17 @@
     margin-bottom: 1rem;
   }
 
+  .do-recipe-now-button {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
   .complete-meal-section {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 0;
+  }
+
+  .complete-meal-section-inner {
+    padding: 0 12px;
   }
 
   .complete-meal-header {
@@ -7452,13 +7674,85 @@
     margin-bottom: 1.5rem;
   }
 
+  .complete-meal-title {
+    font-size: calc(2.5rem - 8px);
+  }
+
+  .complete-meal-subtitle {
+    font-size: calc(1rem - 4px);
+  }
+
+  .view-all-recipes-button {
+    padding: 0.65rem 1.2rem;
+    font-size: 0.85rem;
+    min-height: 40px;
+  }
+
   .complete-meal-cards {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
   }
 
   .complete-meal-card {
+    width: 100%;
+  }
+
+  .complete-meal-card-content {
     padding: 1.25rem;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .complete-meal-card-title {
+    font-size: calc(1.15rem - 2px);
+    text-align: left;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+  }
+
+  .complete-meal-card-meta {
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+    gap: 0.75rem;
+  }
+
+  .complete-meal-card-time {
+    font-size: 0.85rem;
+    color: #492201;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .complete-meal-card-time .time-icon {
+    display: none;
+  }
+
+  .complete-meal-card-difficulty {
+    font-size: 0.75rem;
+    color: #492201;
+    background: rgba(73, 34, 1, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'Inter', 'Lato', sans-serif;
+  }
+
+  .complete-meal-card-difficulty.difficulty-easy,
+  .complete-meal-card-difficulty.difficulty-medium,
+  .complete-meal-card-difficulty.difficulty-hard {
+    background: rgba(73, 34, 1, 0.1);
+    color: #492201;
+  }
+
+  .complete-meal-card-arrow {
+    display: none;
   }
 
   /* Meal Recommender Mobile */
@@ -7649,9 +7943,9 @@
 
   /* View All Recipes Button Mobile */
   .view-all-recipes-button {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.9rem;
-    min-height: 44px;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.85rem;
+    min-height: 40px;
   }
 
   /* Category Detail Page Mobile */
@@ -7779,7 +8073,7 @@
   }
 
   .main-title {
-    font-size: 1.75rem;
+    font-size: calc(1.75rem + 8px);
   }
 
   .home-description {
@@ -7804,8 +8098,8 @@
   }
 
   .what-to-cook-home-button {
-    padding: 0.7rem 1.4rem;
-    font-size: 0.7rem;
+    padding: 1rem 1.5rem;
+    font-size: 0.8rem;
     border-radius: 8px;
     box-shadow: 
       0 2px 8px rgba(73, 34, 1, 0.2),
@@ -7818,10 +8112,7 @@
   }
 
   .what-to-cook-home-button::before {
-    content: '🍳';
-    margin-right: 0.4rem;
-    font-size: 0.85rem;
-    opacity: 0.9;
+    display: none;
   }
 
   .what-to-cook-home-button:hover {
